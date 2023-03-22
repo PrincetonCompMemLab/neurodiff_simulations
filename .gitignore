@@ -1,0 +1,32 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.wts
+*.pdf
+*.mp4
+./color_diff/main
+./favila/main
+./schlichting/main
+all_checkpoints.csv 
+all_results.csv
+python/leabra/pyleabra
+data/
+figs/
+batch/
+
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# mac thing
+.DS_Store
+
+# No GoLand files
+/.idea/*
+.ipynb_checkpoints/

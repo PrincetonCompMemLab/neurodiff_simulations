@@ -13,7 +13,7 @@
 # # Import Stuff
 # <a id='import_everything'></a>
 
-# In[1]:
+# In[2]:
 
 import csv
 import pandas as pd
@@ -65,6 +65,7 @@ else :
     
 #     data_dir = '/Users/victoria/go/src/github.com/emer/leabra/examples/color_diff/data/test_overlap/'
     data_dir = '/Users/victoria/go/src/github.com/emer/leabra/examples/color_diff/data/2021_12_23_color_diff/'
+    data_dir = './figs/test/'
 
 results_dir = data_dir + '/results/'
 if not os.path.exists(results_dir) :
@@ -79,7 +80,7 @@ if not os.path.exists(eps_dir):
 # # Load in files
 # <a id='load_files'></a>
 
-# In[7]:
+# In[19]:
 
 curr_dirs = []
 overlap = np.arange(6)
@@ -90,6 +91,8 @@ for o in overlap :
     curr_d = 'results_--HiddNumOverlapUnits=' + o + '/'
     print(curr_d)
     curr_dirs.append(curr_d)
+    
+    
     
 all_c_mass_list = []
 all_face_list = []
@@ -109,7 +112,11 @@ for d in curr_dirs :
     
     all_corr_list.append(pd.read_csv(data_dir + d + 'fig/results/correlation.csv', index_col = 0))
 
+    # move MDS plots
+    mds_glob = glob.glob(data_dir + d + 'fig/results/*_hidden_data_MDS_rotated_by_run*')
     
+    for source in mds_glob:
+        shutil.copy(source, results_dir + f"Fig 4e: {source.split('/')[-1]}")
 all_c_mass_df = pd.concat(all_c_mass_list, 0)
 all_c_mass_df['overlap'] = all_c_mass_df['overlap'].astype('category')
 all_c_mass_df['layer'] = all_c_mass_df['layer'].astype('category')
@@ -277,7 +284,7 @@ def pre_post_corr_parameter_shift(data, x_parameter, ribbon = False):
 
 #     l.get_texts()[0].set_text('Before')
 #     l.get_texts()[1].set_text('After')
-    title = 'Hidden Layer Within-Pair Correlation'
+    title = 'Fig 4c: Hidden Layer Within-Pair Correlation'
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     plt.xlabel('Overlap')
@@ -379,7 +386,7 @@ def center_of_mass_dist(data_df, layer, ribbon) :
     l = plt.legend(handles[0:2], labels[0:2], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 #     l.get_texts()[0].set_text('Before')
 #     l.get_texts()[1].set_text('After')
-    title = 'Reported Color Difference Between Pairmates'
+    title = 'Fig 4a: Reported Color Difference Between Pairmates'
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     plt.title(title)
@@ -388,7 +395,7 @@ def center_of_mass_dist(data_df, layer, ribbon) :
     plt.ylabel('Number of Units Apart')
     plt.savefig(results_dir + title + '.png', bbox_inches='tight')
     plt.savefig(eps_dir + title + '.eps', bbox_inches='tight')
-
+    
     plt.show()
 
 center_of_mass_dist(color_c_mass_df, 'Color', ribbon = True)
@@ -436,7 +443,7 @@ def plot_error_by_order(color_c_mass_df, ribbon = True) :
     ax.spines['right'].set_visible(False)
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    title = 'Color Error By Condition and Order'
+    title = 'Fig 4b: Color Error By Condition and Order'
     
     plt.title(title)
     plt.ylim([-7.5,7.5])

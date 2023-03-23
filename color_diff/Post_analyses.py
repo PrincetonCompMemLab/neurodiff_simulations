@@ -2153,7 +2153,7 @@ def MDS_plot_procrustes(MDS_data, run, distance_func="euclidean") :
     ]
 
     ax.legend(handles = legend_elements, bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad=0., fontsize=15)
-    title = parameter_values['overlap']['overlapType'].replace('/',':') + ' hidden data MDS rotated by run'
+    title = parameter_values['overlap']['overlapType'].replace('/',':') + '_hidden_data_MDS_rotated_by_run'
     ax.set_title(title)
     
     for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +

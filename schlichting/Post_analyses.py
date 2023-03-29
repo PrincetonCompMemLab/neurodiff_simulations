@@ -5,11 +5,11 @@
 # 
 # 1. [Import stuff](#import_everything)
 # 2. [Set whether these analyses are done for this analysis or not](#set_whether_these_analyses_are_done_for_this_analysis_or_not)
-# 3. [Load data](#os.path.exists(checkpoint_fig_dir)_load_data)
+# 3. [Load data](#os.path.exists_checkpoint_fig_dir_load_data)
 #     1. [Set values for indexing](#Set_some_values_for_indexing_etc)
 #     2. [Rearranging data](#Rearranging_data)
 # 4. [Start Analyses](#Start_Analyses)
-# 5. [Learning Accuracy (SSE ) over time](#Learning_Accuracy_(SSE_)_over_time)
+# 5. [Learning Accuracy (SSE ) over time](#Learning_Accuracy_SSE_over_time)
 #     1. [Print checkpoint](#Checkpoint_0:_istheoutputoutputshowncorrectlythroughoutthelearningtask)
 #     2. [Visualize the output layer at each epoch](#Visualizetheoutputlayerateachepoch)
 # 6. [Correlation Analysis](#Correlation_AnalysisFirstsetupcorrelationmatricesforfinalepochineachtask)
@@ -23,9 +23,10 @@
 # 9. [Center of mass](#CENTER_OF_MASS)
 # 10. [Analyze Scene Layer in Association Task](#Scene_Association_Task)
 # 11. [Analyze Pop Up Over Time](#Analyze_Pop_Up_Over_Time)
-#     1. [Checkpoint for scene layer pop up](#checkpoint_for_scene_layer_pop_up.)
-#     2. [Output Layer: Pop Up](#Output_Layer:_Pop_Up)
-#     3. [Hidden Layer: Pop Up](#Hidden_Layer:_Pop_Up) 
+#     1. [Define functions to plot cycles](#Define_functions_to_plot_cycles)
+#     2. [Checkpoint for scene layer pop up](#checkpoint_for_scene_layer_pop_up.)
+#     3. [Output Layer: Pop Up](#Output_Layer:_Pop_Up)
+#     4. [Hidden Layer: Pop Up](#Hidden_Layer:_Pop_Up) 
 #         1. [Assign units by initial activation](#First,_Assign_units_by_initial_activation)
 #         2. [How many units in each category](#How_Many_in_each_category)
 #         3. [Plot the hidden layer pop up](#Plot_the_hidden_layer_pop_up)
@@ -38,19 +39,8 @@
 #     4. [Calculate NMPH Learning curve](#calc NMPH curve)
 #     4. [Print out param sheet for each projection type to easily paste into output_diff.go](#Print_out_param_sheet_for_each_projection_type_to_easily_paste_into_output_diff.go)
 #     5. [Plot scatter plot of DWt vs. AvgSLrn coproducts](#plot_scatter_plot_DWt_vs_AvgSLrn_coproducts)
-# 13. [Coproducts](#Coproducts)
-#     1. [Plot and compare coproduct](#plot_co_product_compare)
-#     2. [Look at coproducts for various connection types checkpoint](#Look_at_coproducts_for_various_connection_types._Dashed_line_is_AvgL)
-#     3. [Plot co-products in hidden layer](#Plot_co-products_in_hidden_layer)
-# 14. [Weight analysis](#Weight_analysis)
-#     1. [Hidden-to-Hidden Connectivity](#Hidden-to-Hidden_Connectivity)
-#     2. [DWT Boxplot](#DWT_BOXPLOT)
-#     3. [Checkpoint for dwt](#Checkpoint_for_dwt)
-#     4. [Plot Competitor / Target DWt across different trials](#Plot_Competitor/Target_DWt_across_different_trials)
-#     5. [GIF Hidden to hidden connectivity between different unit types](#GIF_Hidden_to_hidden_connectivity_between_different_unit_types)
-#     6. [Hidden-to-Output Connectivity](#Hidden-to-Output_Connectivity)
-# 15. [Add necessary checkpoint info](#Add_necessary_checkpoint_info)
-# 16. [Save](#Save)
+# 13. [Add necessary checkpoint info](#Add_necessary_checkpoint_info)
+# 14. [Save](#Save)
 # 
 # 
 
@@ -92,7 +82,6 @@ pp = pprint.PrettyPrinter(indent=4)
 
 idx = pd.IndexSlice
 
-plt.rcParams['animation.ffmpeg_path'] = '/usr/local/bin/ffmpeg'
 sns.set_style(style='white')
 pd.set_option('display.max_columns', 30)
 
@@ -113,7 +102,7 @@ print(from_cmdLine)
 print('---')
 
 
-# In[3]:
+# In[11]:
 
 if from_cmdLine == 'cmd' :
     data_file = sys.argv[-2]
@@ -139,10 +128,11 @@ else :
     data_file = '2021_10_25_int_blocked/blocked' # blocked, strong = .6 (after osc fix)
     data_file = '2022-02-02-16-49-35'
     dataDir = 'data/' + data_file + '/'
+    dataDir = './figs/test/results_--blocked_interleave_flag=Blocked/'
 #     dataDir = data_file
 
 
-# In[4]:
+# In[12]:
 
 dataDir
 
@@ -155,7 +145,7 @@ dataDir
 # ### set whether these analyses are done for this analysis or not
 # <a id='set_whether_these_analyses_are_done_for_this_analysis_or_not'></a>
 
-# In[5]:
+# In[13]:
 
 test_trial_done = 1
 train_trial_done = 1
@@ -169,14 +159,14 @@ calculate_learning_curve = 0
 
 # 
 # # Load Data
-# <a id='os.path.exists(checkpoint_fig_dir)_load_data'></a>
+# <a id='os.path.exists_checkpoint_fig_dir_load_data'></a>
 
 # In[ ]:
 
 
 
 
-# In[6]:
+# In[14]:
 
 
 figDir = dataDir + 'fig/'
@@ -201,7 +191,7 @@ if not os.path.exists(checkpoint_fig_dir + 'cycle_plots/') :
     
 
 
-# In[7]:
+# In[15]:
 
 # data_run = pd.read_csv(dataDir + 'output_diff_Base_run.csv', sep = '\t')
 # print('max run: ' + str(data_run.iloc[-1]['|Run']))
@@ -209,7 +199,7 @@ if not os.path.exists(checkpoint_fig_dir + 'cycle_plots/') :
 # data_run.iloc[:,:]
 
 
-# In[8]:
+# In[16]:
 
 # data_run["#Seed"].to_numpy().std()
 
@@ -219,23 +209,24 @@ if not os.path.exists(checkpoint_fig_dir + 'cycle_plots/') :
 
 
 
-# In[9]:
+# In[17]:
 
 codeprofiler.enable()
 
 
-# In[10]:
+# In[18]:
 
 data_epc = pd.read_csv(dataDir + 'schlichting_Base_epc.csv', sep = '\t')
 # data_epc
 
 
-# In[11]:
+# In[33]:
 
 if (test_trial_done == 1) :
     print('loading test trial data')
     
     data_test = pd.read_csv(dataDir + 'schlichting_Base_tsttrl.csv', sep = '\t')
+    print(data_test['|Run'])
     data_test = data_test[data_test['|Run'] != '|Run'] ## because of error where header line is repeated. remove that one lne
     assert set(data_test['$TrialName']) == {'med1', 'med2'}, "Trial name must be either med1 or med2"
     print('done')
@@ -248,7 +239,7 @@ data_test[(data_test["|Epoch"] <1)]
 
 
 
-# In[12]:
+# In[20]:
 
 def fill_dummy_stim(data_test, task_type) :
     
@@ -321,7 +312,7 @@ def fill_dummy_stim(data_test, task_type) :
     return data_test
 
 
-# In[13]:
+# In[21]:
 
 if 'high1' in data_test['$TrialName'].unique() :
         ("")
@@ -332,12 +323,12 @@ else :
 
 
 
-# In[14]:
+# In[22]:
 
 data_test
 
 
-# In[15]:
+# In[23]:
 
 if (train_trial_done == 1) :
     print('loading train trial data')
@@ -355,7 +346,7 @@ data_train
 
 
 
-# In[16]:
+# In[24]:
 
 if 'high1' in data_train['$TrialName'].unique() :
         ("")
@@ -370,7 +361,7 @@ else :
 
 
 
-# In[17]:
+# In[25]:
 
 if (train_cycle_done == 1) :
     print('loading train cycle data')
@@ -379,7 +370,7 @@ if (train_cycle_done == 1) :
     print('done')
 
 
-# In[18]:
+# In[26]:
 
 if (test_cycle_done == 1) : 
     print('loading test cycle data')
@@ -388,7 +379,7 @@ if (test_cycle_done == 1) :
     print('done')
 
 
-# In[19]:
+# In[27]:
 
 codeprofiler.disable()
 
@@ -1028,7 +1019,7 @@ def add_analysis_to_analyses_df(analyses_df, title, true_or_false, info = ""):
 
 
 # # Learning Accuracy (SSE ) over time
-# <a id='Learning_Accuracy_(SSE_)_over_time'></a>
+# <a id='Learning_Accuracy_SSE_over_time'></a>
 
 # In[ ]:
 
@@ -1834,7 +1825,7 @@ def plot_correlation_comparison(dataframe, LayerType, analyses_df) :
 
 
 
-# ### Output Layer: 
+# ### Output Layer: Is the low/med/high within pair correlation in the right order in the color layer?
 # 
 # <a id='is_the_low/med/high_within_pair_correlation_in_the_right_order_in_the_output_layer?'></a>
 
@@ -1921,7 +1912,7 @@ except:
 
 
 
-# ### Hidden Layer: 
+# ### Hidden Layer: Is the low/med/high within pair correlation in the right order in the color layer?
 # <a id='is_the_low/med/high_within_pair_correlation_in_the_right_order_in_the_hidden_layer?'></a>
 
 # In[74]:
@@ -2299,7 +2290,7 @@ def MDS_plot_procrustes(MDS_data, run, distance_func="euclidean") :
     ]
 
     ax.legend(handles = legend_elements, bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad=0., fontsize=15)
-    title = title = 'hidden data MDS rotated by run'
+    title = '_hidden_data_MDS_rotated_by_run'
     ax.set_title(title)
     
     for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
@@ -3451,6 +3442,7 @@ if scene_test == True:
 # <a id='Analyze_Pop_Up_Over_Time'></a>
 
 # ### Define functions to plot cycles
+# <a id='Define_functions_to_plot_cycles'></a>
 
 # In[126]:
 
@@ -5564,1296 +5556,6 @@ plt.show()
 # ## ######
 
 
-# ### Coproducts
-# <a id='Coproducts'></a>
-
-# In[172]:
-
-# def coproducts(run, data, trial_type, first_layer, first_unit_type, second_layer, second_unit_type, printvals = False) :
-
-#     co_products_runs = np.empty(0);
-
-#     if run == 'all' :
-#         runs_to_do = range(data_train_stacked.index.get_level_values(0).max())
-#     else : 
-#         runs_to_do = [run]
-        
-#     for r in runs_to_do :
-#         if first_layer == 'Hidden' :
-#             first_unit_dict = unit_dict_list_AvgSLrn[r]
-
-#         elif first_layer == 'Output' :
-#             first_unit_dict = output_classification_dict_AvgSLrn
-#         elif first_layer == 'Scene' :
-#             first_unit_dict = sceneKey_AvgSLrn
-
-#         if second_layer == 'Hidden' : 
-#             second_unit_dict = unit_dict_list_AvgSLrn[r]
-
-#         elif second_layer == 'Output' :
-#             second_unit_dict = output_classification_dict_AvgSLrn
-            
-#         elif second_layer == 'Scene' :
-#             first_unit_dict = sceneKey_AvgSLrn
-#         #get units we care about:
-#         first_units = getKeysByValue(first_unit_dict, first_unit_type) # med 2 units
-# #         first_units = ['#HiddenAvgSLrn[2:0,8]']
-#         second_units = getKeysByValue(second_unit_dict, second_unit_type) #med 1 & 2 (shared)
-# #         print(first_units)
-# #         print(second_units)
-        
-
-#         #get activations for these units during the first trial of trial_type during the recall task
-#         trial_first_units =data.loc[idx[r,epoch_end_initial+1,'TaskColorRecall',first_units], [trial_type]]
-#         trial_second_units =data.loc[idx[r,epoch_end_initial+1,'TaskColorRecall',second_units], [trial_type]]
-
-#         #reshape these to be nx1 and 1xn so we can do dot products
-#         trial_first_units_reshape = trial_first_units[[trial_type]].values
-#         trial_second_units_reshape = trial_second_units[[trial_type]].values.ravel().reshape(1,len(trial_second_units[[trial_type]]))
-
-#         # get all the co-products. if first array is 3x1 and second is 1x3, this then makes a 3x3 array. 
-#         #outer dot product
-#         co_products = np.dot(trial_first_units_reshape,trial_second_units_reshape).ravel()
-#         #Then take the mean of these co products
-        
-#         average_coproduct = co_products.mean()
-
-#         if printvals == True :
-#             print('run = ' + str(r))
-#             print(first_units)
-#             print(first_unit_type + ' activations:\n')
-#             print(trial_first_units_reshape)
-#             print(' ')
-#             print(second_units)
-#             print(second_unit_type + ' activations:\n')
-#             print(trial_second_units_reshape)
-#             print(' co-product:\n')
-#             print(co_products)
-#             print('average co-product:\n')
-#             print(average_coproduct)
-        
-#         if run == 'all': #take an average for each run and use that for histogram
-#             co_products_runs = np.append(co_products_runs, average_coproduct)
-#         else :#if just one run, look at individual co-products
-#             co_products_runs = np.append(co_products_runs, co_products)
-#     return (co_products_runs)
-
-
-# In[173]:
-
-# def plot_coproducts(data, run, overlap_type, competitor_layer, shared_layer) :
-
-#     trialType = overlap_type + '1'
-#     competitorType = overlap_type + '2'
-#     sharedType = overlap_type + '1+2'
-
-#     competitor_to_shared_co = coproducts(run, data, trialType,competitor_layer, competitorType, shared_layer, sharedType, printvals = False)
-#     target_to_shared_co = coproducts(run, data, trialType,competitor_layer, trialType, shared_layer, sharedType, printvals = False)
-#     competitor_to_shared_co = competitor_to_shared_co[~np.isnan(competitor_to_shared_co)]
-#     target_to_shared_co = target_to_shared_co[~np.isnan(target_to_shared_co)]
-
-    
-#     aveL = Layer_AveLFix_dict[shared_layer]
-#     plt.figure(figsize=(6,6))
-#     plt.clf()
-#     plt.hist(competitor_to_shared_co, alpha=0.5, color =[.7,.2, .3], label=f'{overlap_type} 2 * {overlap_type}1+2')
-#     plt.hist(target_to_shared_co, alpha=0.5, color =[.2, .8, .4], label=f'{overlap_type} 1 * {overlap_type}1+2')
-#     # plt.hist(med1_med2_co, alpha=0.5, color =[.5, .1, .3], label='med 1 * med2')
-#     plt.xlim(0,1)
-#     plt.xlabel('Co-Product')
-#     plt.ylabel('Count')
-#     plt.legend(loc='upper right')
-
-# #     plt.axvline(x=aveL, color='k', linestyle='--')
-# #     plt.axvline(x=theta_d_p, color='k', linestyle='--')
-
-#     if run != 'all' :
-#         run = str(run)
-#     title = 'XCAL: ' + overlap_type.capitalize() +' 1 Trial ' + competitor_layer +' -> ' + shared_layer +' Layer co-product: Run ' + run
-#     plt.title(title)
-#     plt.savefig(checkpoint_fig_dir + title + '.png', bbox_inches = "tight")
-#     plt.show()
-# #         return (competitor_to_shared_co, target_to_shared_co)
-
-    
-
-
-# In[174]:
-
-# def plot_co_product_swarm(data, run, overlap_type, competitor_layer, shared_layer) :
-
-    
-#     trialType = overlap_type + '1'
-#     competitorType = overlap_type + '2'
-#     sharedType = overlap_type + '1+2'
-
-#     competitor_to_shared_co = coproducts(run, data, trialType,competitor_layer, competitorType, shared_layer, sharedType, printvals = False)
-#     target_to_shared_co = coproducts(run, data, trialType,competitor_layer, trialType, shared_layer, sharedType, printvals = False)
-#     competitor_to_shared_co = competitor_to_shared_co[~np.isnan(competitor_to_shared_co)]
-#     target_to_shared_co = target_to_shared_co[~np.isnan(target_to_shared_co)]
-
-    
-#     aveL = Layer_AveLFix_dict[shared_layer]
-    
-#     temp_df_1 = pd.DataFrame(columns = ['run', 'type', 'coproduct'])
-#     temp_df_1['coproduct'] = target_to_shared_co
-#     temp_df_1.type = 'target'
-#     temp_df_1.run = temp_df_1.index
-
-#     temp_df_2 = pd.DataFrame(columns = ['run', 'type', 'coproduct'])
-#     temp_df_2.coproduct = competitor_to_shared_co
-#     temp_df_2.type = 'competitor'
-#     temp_df_2.run = temp_df_2.index
-
-#     temp_df = pd.concat([temp_df_1, temp_df_2])
-#     title = 'XCAL: ' + overlap_type.capitalize() +' 1 Trial ' + competitor_layer +' -> ' + shared_layer +' Layer co-product: Run ' + run
-
-#     sns.swarmplot(x = 'type', y = 'coproduct', data = temp_df)
-#     plt.show()
-
-    
-#     sns.boxplot(x = 'type', y = 'coproduct', data = temp_df)
-
-#     plt.title(title)
-
-#     plt.show()
-    
-#     return temp_df
-    
-
-
-# In[ ]:
-
-
-
-
-# In[175]:
-
-ThrP_NMPH_dict = parameter_values['ThrP_NMPH']
-DRev_dict = parameter_values['DRev_NMPH']
-DThr = parameter_values['DThr_NMPH']
-
-
-# In[ ]:
-
-
-
-
-# ### Plot and compare coproduct
-# <a id='plot_co_product_compare'></a>
-# 
-# 
-
-# In[176]:
-
-
-def plot_co_product_compare(first_Layer_AvgSLrn, second_Layer_AvgSLrn, firstLayer, secondLayer, analyses_df) :
-    epoch = first_Layer_AvgSLrn['epoch'].unique()
-    if len(epoch) != 1 :
-        raise ValueError('Should only be looking at one epoch')
-    epoch = epoch[0]
-    
-    title = 'XCAL Comparison: ' + firstLayer +' -> ' + secondLayer +' Layer co-product Epoch #' + str(epoch)
-    try:
-        plt.clf()
-        prjn = firstLayer + 'To' + secondLayer
-        first_data_AvgSLrn_wide = first_Layer_AvgSLrn.pivot_table(index = ['run', 'epoch', 'pair'], columns='targ', values='activity').reset_index()
-        second_data_AvgSLrn_wide = second_Layer_AvgSLrn.pivot_table(index = ['run', 'epoch', 'pair'], columns='targ', values='activity').reset_index()
-
-        # the second data frame always has ['competitor', 'shared', 'target']? 
-        # because it has to be "Hidden" or "Output"
-        data_AvgSLrn_wide = second_data_AvgSLrn_wide.drop(columns = ['competitor', 'shared', 'target'])
-        data_AvgSLrn_wide['targ_shared'] = first_data_AvgSLrn_wide.target * second_data_AvgSLrn_wide.shared
-        data_AvgSLrn_wide['comp_shared'] = first_data_AvgSLrn_wide.competitor * second_data_AvgSLrn_wide.shared
-        data_AvgSLrn_wide['comp_comp'] = first_data_AvgSLrn_wide.competitor * second_data_AvgSLrn_wide.competitor
-        
-        print(data_AvgSLrn_wide)
-        print('--')
-        coproducts = data_AvgSLrn_wide.melt(id_vars=['run', 'epoch', 'pair'], value_vars=['comp_comp', 'comp_shared', 'targ_shared', 'comp_shared'], value_name = 'coproduct', var_name='conn_type')
-
-        coproducts['pair'] = coproducts['pair'].astype('category')
-        coproducts['pair'] = coproducts['pair'].cat.reorder_categories(['low', 'med','high'])
-        coproducts = coproducts.sort_values(by=['run', 'epoch', 'pair'])
-
-
-#         aveL = Layer_AveLFix_dict[secondLayer]
-
-        g = sns.FacetGrid(coproducts, col="pair")
-        g.map(sns.boxplot, "conn_type", "coproduct", palette='viridis')
-        axes = g.axes.flatten()
-        for col in range(numPairs) :
-            g.axes[0][col].axhline(y = ThrP_NMPH_dict[prjn], color='black', ls='--', linewidth=2, alpha=.7)
-            g.axes[0][col].axhline(y = DRev_dict[prjn], color='black', ls='--', linewidth=2, alpha=.7)
-            g.axes[0][col].axhline(y = DThr[prjn], color='black', ls='--', linewidth=2, alpha=.7)
-
-        plt.subplots_adjust(top=0.8)
-        g.fig.suptitle(title) # can also get the figure from plt.gcf()
-        axes = g.axes.flatten()
-        axes[0].set_title("Low")
-        axes[1].set_title("Medium")
-        axes[2].set_title("High")
-#         plt.ylim(0,1)
-        plt.savefig(checkpoint_fig_dir + title + '.png', bbox_inches = "tight")
-        plt.show()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, True) 
-        return coproducts, analyses_df
-    except Exception as e: 
-        traceback.print_exc()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, False) 
-        return "error", analyses_df
-    
-   
-
-
-# In[177]:
-
-output_competitor_AvgSLrn
-
-
-# 
-
-# #### Look at coproducts for various connection types. Dashed line is AvgL
-# <a id='Look_at_coproducts_for_various_connection_types._Dashed_line_is_AvgL'></a>
-
-# We want to see that target-shared (blue) is above AvgL for each layer and overlap type. 
-# 
-# We expect something different for competitor-shared coproducts (green): low < med < high, and high should be above AvgL whereas Low and Medium are below
-# 
-# TO DO:
-# * right now, this just looks at output-output and hidden-hidden coproducts. Ideally we have this for scene-hidden and hidden-output too
-
-# In[178]:
-
-plt.clf()
-col_col_coproducts, analyses_df = plot_co_product_compare(output_competitor_AvgSLrn, output_competitor_AvgSLrn, 'Output', 'Output', analyses_df)
-plt.clf()
-hidden_hidden_coproducts, analyses_df = plot_co_product_compare(hidden_competitor_AvgSLrn, hidden_competitor_AvgSLrn, 'Hidden', 'Hidden', analyses_df)
-plt.clf()
-col_hidden_coproducts, analyses_df = plot_co_product_compare(output_competitor_AvgSLrn, hidden_competitor_AvgSLrn, 'Output', 'Hidden', analyses_df)
-plt.clf()
-hidden_output_coproducts, analyses_df = plot_co_product_compare(hidden_competitor_AvgSLrn, output_competitor_AvgSLrn, 'Hidden', 'Output', analyses_df)
-plt.clf()
-scene_hidden_coproducts, analyses_df = plot_co_product_compare(scene_competitor_AvgSLrn, hidden_competitor_AvgSLrn, 'Scene', 'Hidden', analyses_df)
-
-
-# Output Layer checkpoint:
-
-# In[ ]:
-
-
-
-
-# In[179]:
-
-#high: 
-
-def coproduct_checkpoint_Prjn(prjn, coproduct_df, checkpoints_df) :
-    is_high = coproduct_df['pair'] == 'high'
-    is_compet = coproduct_df['conn_type'] == 'comp_shared'
-    high_co = coproduct_df[is_high & is_compet]['coproduct'].mean()
-
-    if high_co > ThrP_NMPH_dict[prjn] :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False
-
-    temp = [prjn + ' high coprod high', checkpoint_TF, high_co, prjn + ': is high competitor-high shared above ThrP_NMPH? VALLUE is the co-activity amount']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-    #med: 
-
-    is_med = coproduct_df['pair'] == 'med'
-    is_compet = coproduct_df['conn_type'] == 'comp_shared'
-    med_co = coproduct_df[is_med & is_compet]['coproduct'].mean()
-
-    if med_co < ThrP_NMPH_dict[prjn] :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False
-
-    temp = [prjn + ' med coprod low', checkpoint_TF, med_co, prjn + ': is med competitor-med shared below ThrP_NMPH? VALLUE is the co-activity amount']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-    #low 
-    is_low = coproduct_df['pair'] == 'low'
-    is_compet = coproduct_df['conn_type'] == 'comp_shared'
-    low_co = coproduct_df[is_low & is_compet]['coproduct'].mean()
-
-    if low_co <ThrP_NMPH_dict[prjn] :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False
-
-    temp = [prjn + ' low coprod low', checkpoint_TF, low_co, prjn + ': is low competitor-low shared below ThrP_NMPH? VALLUE is the co-activity amount']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-    #comparison
-    if low_co< med_co < high_co:
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False
-
-    temp = [prjn + ' coprod l-m-h', checkpoint_TF, 0, prjn + ': is is coproducts of competitor-shared in correct low-med-high order']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-    
-    mean_values = dict(low=low_co, med=med_co, high=high_co)
-
-#     for type_overlap, mean_co in mean_values.items() :
-        
-#         description = prjn + ' ' + type_overlap + ' competitor-shared value of coproduct (ignore true/false)'
-#         temp = [prjn + ' ' + type_overlap +' ' + 'compet-shared coproduct VALUE', True, mean_co, description]
-#         temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#         checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
- 
-    
-    temp = [prjn + ' coproduct range', True, high_co - low_co, 'range of high compet coproduct - low competitor coproduct']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-    
-    return checkpoints_df
-
-
-# In[ ]:
-
-
-
-
-# In[180]:
-
-if medium_only_analysis == False :
-
-    checkpoints_df = coproduct_checkpoint_Prjn('OutputToOutput', col_col_coproducts, checkpoints_df)
-    checkpoints_df = coproduct_checkpoint_Prjn('HiddenToHidden', hidden_hidden_coproducts, checkpoints_df)
-    checkpoints_df = coproduct_checkpoint_Prjn('OutputToHidden', col_hidden_coproducts, checkpoints_df)
-    checkpoints_df = coproduct_checkpoint_Prjn('HiddenToOutput', hidden_output_coproducts, checkpoints_df)
-    checkpoints_df = coproduct_checkpoint_Prjn('SceneToHidden', scene_hidden_coproducts, checkpoints_df)
-    checkpoints_df
-
-
-# In[ ]:
-
-
-
-
-# In[181]:
-
-## GET THE SPECIFIC PRJN FOR EACH RUN
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[182]:
-
-#### #high: 
-
-# def coproduct_checkpoint(Layer, coproduct_df, checkpoints_df) :
-#     is_high = coproduct_df['pair'] == 'high'
-#     is_compet = coproduct_df['conn_type'] == 'compet_shared'
-#     high_co = coproduct_df[is_high & is_compet]['coproduct'].mean()
-
-#     if high_co > Layer_AveLFix_dict['Output'] :
-#         checkpoint_TF = True
-#     else :
-#         checkpoint_TF = False
-
-#     temp = [Layer + ' high coprod high', checkpoint_TF, high_co, Layer +'-' + Layer + ': is high competitor-high shared above AvgL']
-#     temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#     checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-#     #med: 
-
-#     is_med = coproduct_df['pair'] == 'med'
-#     is_compet = coproduct_df['conn_type'] == 'compet_shared'
-#     med_co = coproduct_df[is_med & is_compet]['coproduct'].mean()
-
-#     if med_co < Layer_AveLFix_dict['Output'] :
-#         checkpoint_TF = True
-#     else :
-#         checkpoint_TF = False
-
-#     temp = [Layer + ' med coprod low', checkpoint_TF, med_co, Layer +'-' + Layer + ': is med competitor-med shared below AvgL']
-#     temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#     checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-#     #low 
-#     is_low = coproduct_df['pair'] == 'low'
-#     is_compet = coproduct_df['conn_type'] == 'compet_shared'
-#     low_co = coproduct_df[is_low & is_compet]['coproduct'].mean()
-
-#     if low_co <Layer_AveLFix_dict['Output'] :
-#         checkpoint_TF = True
-#     else :
-#         checkpoint_TF = False
-
-#     temp = [Layer + ' low coprod low', checkpoint_TF, low_co, Layer +'-' + Layer + ': is low competitor-low shared below AvgL']
-#     temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#     checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-#     #comparison
-#     if low_co< med_co < high_co:
-#         checkpoint_TF = True
-#     else :
-#         checkpoint_TF = False
-
-#     temp = [Layer + ' coprod l-m-h', checkpoint_TF, 0, Layer +'-' + Layer + ': is is coproducts of competitor-shared in correct low-med-high order']
-#     temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#     checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-    
-#     mean_values = dict(low=low_co, med=med_co, high=high_co)
-
-#     for type_overlap, mean_co in mean_values.items() :
-        
-#         description = Layer + ' Layer: ' + type_overlap + ' competitor-shared value of coproduct (ignore true/false)'
-#         temp = [Layer + ' ' + type_overlap +' ' + 'compet-shared coproduct VALUE', True, mean_co, description]
-#         temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#         checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
- 
-    
-#     temp = [Layer + ' coproduct range', True, high_co - low_co, 'range of high compet coproduct - low competitor coproduct']
-#     temp_series = pd.Series(temp, index = checkpoints_df.columns)
-#     checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-    
-#     return checkpoints_df
-
-
-# In[183]:
-
-# checkpoints_df = coproduct_checkpoint('Color', col_col_coproducts, checkpoints_df)
-# checkpoints_df = coproduct_checkpoint('Hidden', hidden_hidden_coproducts, checkpoints_df)
-
-
-# In[ ]:
-
-
-
-
-# In[184]:
-
-# #high: 
-
-# is_high = col_col_coproducts['pair'] == 'high'
-# is_compet = col_col_coproducts['conn_type'] == 'compet_shared'
-# high_co = col_col_coproducts[is_high & is_compet]['coproduct'].mean()
-
-# if high_co > Layer_AveLFix_dict['Output'] :
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['output high coprod high', checkpoint_TF, high_co, 'Color-Color: is high competitor-high shared above AvgL']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-# #med: 
-
-# is_med = col_col_coproducts['pair'] == 'med'
-# is_compet = col_col_coproducts['conn_type'] == 'compet_shared'
-# med_co = col_col_coproducts[is_med & is_compet]['coproduct'].mean()
-
-# if med_co < Layer_AveLFix_dict['Output'] :
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['output med coprod low', checkpoint_TF, med_co, 'Color-Color: is med competitor-med shared below AvgL']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-# #low 
-# is_low = col_col_coproducts['pair'] == 'low'
-# is_compet = col_col_coproducts['conn_type'] == 'compet_shared'
-# low_co = col_col_coproducts[is_low & is_compet]['coproduct'].mean()
-
-# if low_co <Layer_AveLFix_dict['Output'] :
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['output low coprod low', checkpoint_TF, low_co, 'Color-Color: is low competitor-low shared below AvgL']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-# #comparison
-# if low_co< med_co < high_co:
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['output coprod l-m-h', checkpoint_TF, 0, 'Color-Color: is is coproducts of competitor-shared in correct low-med-high order']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-
-# Hidden Layer Checkpoint:
-
-# In[185]:
-
-# #high: 
-
-# is_high = hidden_hidden_coproducts['pair'] == 'high'
-# is_compet = hidden_hidden_coproducts['conn_type'] == 'compet_shared'
-# high_co = hidden_hidden_coproducts[is_high & is_compet]['coproduct'].mean()
-
-# if high_co > Layer_AveLFix_dict['Hidden'] :
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['hidden high coprod high', checkpoint_TF, high_co, 'Hidden-Hidden: is high competitor-high shared above AvgL']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-# #med: 
-
-# is_med = hidden_hidden_coproducts['pair'] == 'med'
-# is_compet = hidden_hidden_coproducts['conn_type'] == 'compet_shared'
-# med_co = hidden_hidden_coproducts[is_med & is_compet]['coproduct'].mean()
-
-# if med_co < Layer_AveLFix_dict['Hidden'] :
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['hidden med coprod low', checkpoint_TF, med_co, 'Hidden-Hidden: is med competitor-med shared below AvgL']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-# #low 
-# is_low = hidden_hidden_coproducts['pair'] == 'low'
-# is_compet = hidden_hidden_coproducts['conn_type'] == 'compet_shared'
-# low_co = hidden_hidden_coproducts[is_low & is_compet]['coproduct'].mean()
-
-# if low_co <Layer_AveLFix_dict['Hidden'] :
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['hidden low coprod low', checkpoint_TF, low_co, 'Hidden-Hidden: is low competitor-low shared below AvgL']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-# #comparison
-# if low_co< med_co < high_co:
-#     checkpoint_TF = True
-# else :
-#     checkpoint_TF = False
-
-# temp = ['hidden coprod l-m-h', checkpoint_TF, 0, 'Hidden-Hidden: is is coproducts of competitor-shared in correct low-med-high order']
-# temp_series = pd.Series(temp, index = checkpoints_df.columns)
-# checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-
-# In[ ]:
-
-
-
-
-# ## plot co-products in hidden layer
-# <a id='Plot_co-products_in_hidden_layer'></a>
-
-# In[186]:
-
-# plot_coproducts(data_train_stacked, 'all', 'low', 'Hidden', 'Hidden')
-# plot_coproducts(data_train_stacked, 'all', 'med', 'Hidden', 'Hidden')
-# plot_coproducts(data_train_stacked, 'all', 'high', 'Hidden', 'Hidden')
-
-
-# # Weight analysis
-# <a id='Weight_analysis'></a>
-# Weights are organized in an array with 9900 elements
-# 
-# * There are 100 units, each of which are connected to 99 neighbors.
-# * The weights are organized sender-first:
-#     * The first 99 weights are the weights from unit 0 with the rest
-#     * The second 99 weights are the weights from unit 1 to the rest, etc
-# * Row is sender, column is receiver
-# 
-# 
-
-# In[187]:
-
-def get_results_array(connectivity_by_type):
-    unit_types = ['low1', 'low2', 'low1+2', 'med1', 'med2', 'med1+2', 'high1', 'high2', 'high1+2', 'not active', 'cross-pair']
-    result_array = np.zeros(shape=(len(unit_types), len(unit_types)))
-    for idx, unit_type in enumerate(unit_types):
-        for other_idx, other_unit_type in enumerate(unit_types):
-            result_array[idx, other_idx] = (np.mean(connectivity_by_type[tuple([unit_type, other_unit_type])]))
-    return result_array
-
-def plot_hidden_to_hidden_connectivity_between_types(result_array, analyses_df):
-    try:
-        unit_types = ['low1', 'low2', 'low1+2', 'med1', 'med2', 'med1+2', 'high1', 'high2', 'high1+2', 'not active', 'cross-pair']
-        result_array = np.array(result_array)
-        result_array = np.nanmean(result_array, axis = 0)
-        print(result_array.shape)
-        fig, ax = plt.subplots(figsize = (10,10))
-        im = ax.imshow(result_array, cmap='plasma')
-
-        # We want to show all ticks...
-        ax.set_xticks(np.arange(len(unit_types)))
-        ax.set_yticks(np.arange(len(unit_types)))
-        # ... and label them with the respective list entries
-        ax.set_xticklabels(unit_types)
-        ax.set_yticklabels(unit_types)
-
-        # Rotate the tick labels and set their alignment.
-        plt.setp(ax.get_xticklabels(), rotation=90, ha="right",
-                 rotation_mode="anchor")
-
-        # Loop over data dimensions and create text annotations.
-        for i in range(len(unit_types)):
-            for j in range(len(unit_types)):
-                text = ax.text(j, i, "%.2f" %(result_array[i, j]),
-                               ha="center", va="center", color="w")
-        import matplotlib.lines as mlines
-        l = mlines.Line2D([0,len(unit_types)], [0,len(unit_types)])
-        ax.add_line(l)
-        title = "Weight Matrix Hidden-to-Hidden (Averaged Across Runs)"
-        ax.set_title(title)
-        fig.outputbar(im, ax=ax, shrink = 0.8)
-        fig.tight_layout()
-        plt.savefig(checkpoint_fig_dir + title + '.png', bbox_inches = "tight")
-        plt.show()
-        
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, True) 
-    except:
-        traceback.print_exc()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, False) 
-    return analyses_df
-
-
-# ## Hidden-to-Hidden Connectivity 
-# <a id='Hidden-to-Hidden_Connectivity'></a>
-
-# In[188]:
-
-weight_analysis = 0 
-if train_trial_done == 1:
-    if weight_analysis == 1 :
-        result_arrays = []
-        for run in range(nruns + 1):
-            unit_type_dict = unit_dict_list_actM[run] 
-            type_unit_dict = unit_dict_list[run]
-            run_weights = np.array(data_train_stacked.loc[(run, epoch_end_initial, 
-                                                          'TaskColorWOOsc', 
-                                                          slice(hidden_to_hidden_weights_Start, hidden_to_hidden_weights_End)), 
-                                                          slice('med1')])[:,0]
-
-
-            connectivity_by_type = defaultdict(list)
-            for unit, unit_type in unit_type_dict.items():
-                same_type_weights = []
-                different_type_weights = []
-                unit_id = get_hidden_id(unit)
-                for other_unit_type, other_unit_list in type_unit_dict.items(): # other_unit_list = list of units of same type
-                    for other_unit in other_unit_list: # loop through all other units
-
-                        if other_unit == unit: # don't do anything for same unit
-                            continue
-                        other_unit_id = get_hidden_id(other_unit)
-                        weight_id = unit_id * 99 + other_unit_id - int(other_unit_id > unit_id) 
-                        # each unit is only connected to 99 neighbors
-        #                 print(unit, unit_id, unit_type, other_unit, other_unit_id, other_unit_type, weight_id)
-                        weight = run_weights[weight_id]
-                        connectivity_by_type[tuple([unit_type, other_unit_type])].append(weight)
-
-            result_array = get_results_array(connectivity_by_type)
-            result_arrays.append(result_array)            
-
-
-        #     for unit_type, unit in type_unit_dict.items():
-        #         print(unit_type, unit)
-
-        analyses_df = plot_hidden_to_hidden_connectivity_between_types(result_arrays, analyses_df)
-
-
-# ## DWT BOXPLOT
-# <a id='DWT_BOXPLOT'></a>
-
-# In[189]:
-
-## TO DO: 
-## need to add to function what layers are being used. will need to change unit_dict depending on that. 
-## Need to make so if it's scene, the correct unit_dict is used.
-##make it so title works ok. 
-
-## double check everything since this is complicated.
-## to do-- could actually make a clearer version with XCAL function! 
-## would do 
-## act = data_train_stacked.loc[(run, epoch, slice(None), slice(hidden_Start_AvgSLrn, hidden_End_AvgSLrn)), trial]
-## and get coproduct for each. then, could plot the scatter with hue. 
-
-## to do-- add analysis check for analysis_df
-
-def convert_list_units_to_id(unit_list) :
-    id_list = [get_hidden_id(unit) for unit in unit_list]
-    return id_list
-
-
-def dwt_by_conn_type(data_train_stacked, first_layer, second_layer, sending_type, analyses_df) :
-    plt.clf()
-    try:
-        dwt_df = pd.DataFrame(columns = ['run', 'epoch', 'overlap', 'conn_type', 'dwt'])
-
-        epoch = epoch_end_initial + 1
-        first_layer = 'Hidden'
-        second_layer = 'Hidden'
-
-        if first_layer == 'Hidden' :
-            first_layer_dict = unit_dict_list
-        else:
-            raise ValueError('need to adjust code so it can work with other layers.')
-
-        if second_layer == 'Hidden' :
-            second_layer_dict = unit_dict_list
-        else : 
-            raise ValueError('need to adjust code so it can work with other layers.')
-
-        receiving_type = ['-competitor', '-shared', '-target']
-        connection_type_list = [sending_type + r for r in receiving_type]
-        
-
-        if sending_type == 'competitor' :
-            receiving_type = ['-competitor', '-']
-
-        for run in range(nruns):
-            for pair in ['low','med', 'high']:
-                is_run = output_competitor_AvgSLrn['run'] == run
-                is_competitor = output_competitor_AvgSLrn['targ'] == 'competitor'
-                is_pair = output_competitor_AvgSLrn['pair'] == pair
-                currRun = output_competitor_AvgSLrn[is_run & is_competitor & is_pair]
-
-                trial = currRun['trial'].values[0]
-                competitor = currRun['unit'].values[0]
-                shared = currRun['pair'].values[0] + '1+2'
-
-                dwt = data_train_stacked.loc[(run, epoch, slice(None), slice(hidden_to_hidden_DWt_Start, hidden_to_hidden_DWt_End)), trial]
-
-
-                for conn_type in connection_type_list :
-
-                    conn_type_array = conn_type.split(sep = '-')
-                    first= conn_type_array[0]
-                    second=conn_type_array[1]
-                    
-                    if first == 'target':
-                        first_type = trial
-                    elif first == 'competitor' :
-                        first_type = competitor
-                        
-                    if second == 'competitor' :
-                        second_type = competitor
-                    elif second == 'target' :
-                        second_type = trial
-                    elif second == 'shared' :
-                        second_type = shared
-
-                    first_units = first_layer_dict[run][first_type] 
-                    first_units_id = np.array(convert_list_units_to_id(first_units))
-
-                    second_units = second_layer_dict[run][second_type]
-                    second_units_id = np.array(convert_list_units_to_id(second_units))
-
-
-                    #use list comprehension to create each weight id. 
-                    #there's an if statement at the end so that if first and second layers are the same (i.e. hidden-->hidden)
-                    #it'll skiip if the unit is the same for both. 
-
-                    weight_id = [first_u * 99 + second_u - int(first_u < second_u) for first_u in first_units_id for second_u in second_units_id if not (first_layer == second_layer and first_u ==second_u)]
-
-                    mean_conn_dwt = dwt.iloc[weight_id].mean()
-
-                    temp_series = pd.Series([run, epoch, pair, conn_type, mean_conn_dwt], index = dwt_df.columns)
-                    dwt_df = dwt_df.append(temp_series, ignore_index = True)
-
-        sns.boxplot(x = 'overlap', hue = 'conn_type' , y = 'dwt', data = dwt_df)
-        plt.axhline(y=0, color='k', linestyle='-')
-#         plt.ylim(-.02, .02)
-        title = 'dwt for ' + first_layer + '-' + second_layer + ' first trial second task: ' + sending_type 
-        print(title)
-        plt.title(title)
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        plt.savefig(checkpoint_fig_dir + title + '.png', bbox_inches = "tight")
-
-        plt.show()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, True) 
-        return dwt_df, analyses_df
-    except :
-        traceback.print_exc()
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, False) 
-        
-        return "error", analyses_df
-
-
-
-# In[ ]:
-
-
-
-
-# In[190]:
-
-plt.clf()
-dwt_df, analyses_df = dwt_by_conn_type(data_train_stacked, 'Hidden', 'Hidden', 'competitor', analyses_df)
-plt.clf()
-dwt_df, analyses_df = dwt_by_conn_type(data_train_stacked, 'Hidden', 'Hidden', 'target', analyses_df)
-
-
-# ### Checkpoint for dwt
-# <a id='Checkpoint_for_dwt'></a>
-
-# In[191]:
-
-## checkpoint for dwt
-##to-do : need to make this a function so can use with multiple layer connections, once
-## the dwt analysis works with scene too. 
-if type(dwt_df) == pd.core.frame.DataFrame :
-
-    layers = 'Hidden-Hidden'
-
-    ## set up
-    is_med = dwt_df['overlap'] == 'med'
-    is_high = dwt_df['overlap'] == 'high'
-    is_low = dwt_df['overlap'] == 'low'
-    is_comp_shared = dwt_df['conn_type'] == 'competitor-shared'
-    is_comp_comp = dwt_df['conn_type'] == 'competitor-competitor'
-
-    ## is medium overlap competitor-shared dwt negative
-    if dwt_df[is_med & is_comp_shared]['dwt'].mean() < 0 :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False    
-    temp = ['dwt med negative', checkpoint_TF, dwt_df[is_med & is_comp_shared]['dwt'].mean(), layers + ': med: is dwt for competitor-shared negative']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-    ## is medium overlap competitor-shared dwt LESS than competitor-competitor dwt
-    if dwt_df[is_med & is_comp_shared]['dwt'].mean() < dwt_df[is_med & is_comp_comp]['dwt'].mean() :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False    
-
-    dwt_range = dwt_df[is_med & is_comp_shared]['dwt'].mean() - dwt_df[is_med & is_comp_comp]['dwt'].mean()
-
-    temp = ['dwt med correct order', checkpoint_TF, dwt_range, layers + ': med: is dwt for competitor-shared lower than competitor-competitor']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-    ## is high overlap competitor-shared dwt positive
-    if dwt_df[is_high & is_comp_shared]['dwt'].mean() > 0 :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False    
-    temp = ['dwt high  positive', checkpoint_TF, dwt_df[is_high & is_comp_shared]['dwt'].mean(), layers + ': high: is dwt for competitor-shared positive']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-    ## is med overlap competitor-shared dwt less than LOW overlap competitor-shared dwt
-    if dwt_df[is_med & is_comp_shared]['dwt'].mean() < dwt_df[is_low & is_comp_shared]['dwt'].mean() :
-        checkpoint_TF = True
-    else :
-        checkpoint_TF = False   
-    dwt_range = dwt_df[is_med & is_comp_shared]['dwt'].mean() - dwt_df[is_low & is_comp_shared]['dwt'].mean()
-
-    temp = ['dwt med lower than low', checkpoint_TF, dwt_range, layers + ': is medium competitor-shared dwt less than low']
-    temp_series = pd.Series(temp, index = checkpoints_df.columns)
-    checkpoints_df = checkpoints_df.append(temp_series, ignore_index = True)
-
-
-# In[ ]:
-
-
-
-
-# ### Plot Competitor / Target DWt across different trials
-# <a id='Plot_Competitor/Target_DWt_across_different_trials'></a>
-
-# In[192]:
-
-def get_trial_orders():
-    trial_orders = []
-    for epoch in range((max_final_epoch + 1) * (nruns + 1)):
-        trialnames = (data_train["$TrialName"][6*epoch:(6*epoch + 6)])
-        first_trial = None
-        second_trial = None
-        for trial in trialnames:
-            if trial not in ["med1", "med2"]:
-                continue
-            if trial == "med1":
-                trial_orders.append(["med1", "med2"])
-#                 print(["med1", "med2"])
-                break
-            else:
-                trial_orders.append(["med2", "med1"])
-#                 print(["med2", "med1"])
-                break
-    return trial_orders
-
-def get_DWt_Plots_pdf(analyses_df):
-    title = "DWt_Plots.pdf"
-    try:
-        # create a PdfPages object
-        pdf = PdfPages(checkpoint_fig_dir + title)
-        for run in range(1):
-            result_arrays = []
-            unit_type_dict = unit_dict_list_actM[run] 
-
-            type_unit_dict = unit_dict_list[run]
-            trial_orders = get_trial_orders()
-
-            for epoch in range(max_final_epoch + 1):
-                trial_1, trial_2 = trial_orders[run * (max_final_epoch + 1) + epoch]
-
-
-
-                # Get competitor->shared DWt
-                run_dwt_1 = np.array(data_train_stacked.loc[(run, epoch, 
-                                                              slice(None), 
-                                                              slice(hidden_to_hidden_DWt_Start, hidden_to_hidden_DWt_End)), 
-                                                                trial_1])#[:,0]
-
-                run_weight_1 = np.array(data_train_stacked.loc[(run, epoch, 
-                                                              slice(None), 
-                                                              slice(hidden_to_hidden_weights_Start, hidden_to_hidden_weights_End)), 
-                                                              (trial_1)])#[:,0]
-
-
-                trial_1_competitor = competitor_trial(trial_1)
-                competitor_to_shared = []
-                competitor_to_shared_weight = []
-                for unit in type_unit_dict[trial_1_competitor]:
-                    unit_id = get_hidden_id(unit)
-                    for other_unit in type_unit_dict["med1+2"]:
-                        other_unit_id = get_hidden_id(other_unit)
-        #                 weight_id = unit_id * 99 + other_unit_id - int(other_unit_id > unit_id) 
-                        weight_id = other_unit_id * 99 + unit_id - int(other_unit_id < unit_id) 
-                        weight = run_dwt_1[weight_id]
-                        competitor_to_shared.append(weight)
-                        competitor_to_shared_weight.append(run_weight_1[weight_id])
-
-                # Get target->shared DWt
-                run_dwt_2 = np.array(data_train_stacked.loc[(run, epoch, 
-                                                              slice(None), 
-                                                              slice(hidden_to_hidden_DWt_Start, hidden_to_hidden_DWt_End)), 
-                                                              (trial_2)])#[:,0]
-
-                run_weight_2 = np.array(data_train_stacked.loc[(run, epoch, 
-                                                              slice(None), 
-                                                              slice(hidden_to_hidden_weights_Start, hidden_to_hidden_weights_End)), 
-                                                              (trial_2)])#[:,0]
-
-
-                trial_2_target = trial_2
-                target_to_shared = []
-                target_to_shared_weight = []
-                for unit in type_unit_dict[trial_2_target]:
-                    unit_id = get_hidden_id(unit)
-                    for other_unit in type_unit_dict["med1+2"]:
-                        other_unit_id = get_hidden_id(other_unit)
-        #                 weight_id = unit_id * 99 + other_unit_id - int(other_unit_id > unit_id) 
-                        weight_id = other_unit_id * 99 + unit_id - int(other_unit_id < unit_id) 
-                        weight = run_dwt_2[weight_id]
-                        target_to_shared.append(weight)
-                        target_to_shared_weight.append(run_weight_2[weight_id])
-
-                x = np.arange(2)
-                y = [np.mean(competitor_to_shared), np.mean(target_to_shared)]
-                txts_to_print = []
-                txts_to_print.append("competitor_to_shared " + str(competitor_to_shared))
-                txts_to_print.append("target_to_shared " + str(target_to_shared))
-
-                txts_to_print.append("competitor_to_shared_weight " + "mean " + str(np.mean(competitor_to_shared_weight)) + " " + str(competitor_to_shared_weight))
-                txts_to_print.append("target_to_shared_weight " + "mean " + str(np.mean(target_to_shared_weight)) + " " + str(target_to_shared_weight))
-                txts_to_print = "\n".join(txts_to_print)
-
-
-                fig, ax = plt.subplots(figsize=(6,6))
-                plt.bar(x, y)
-                plt.title(f"Run {run} Epoch {epoch} with trial order: {trial_1}, {trial_2}")
-                plt.text(0.05,1.15,txts_to_print, size=18, transform=ax.transAxes)
-    #             plt.tight_layout()
-
-
-
-                pdf.savefig(fig, bbox_inches = "tight")
-    #             fig.show()
-
-        pdf.close()
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, True) 
-    except:
-        traceback.print_exc()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, False) 
-    return analyses_df
-#if train_trial_done == 1:
-#    analyses_df = get_DWt_Plots_pdf(analyses_df)
-
-
-# ### GIF Hidden to hidden connectivity between different unit types
-# <a id='GIF_Hidden_to_hidden_connectivity_between_different_unit_types'></a>
-
-# In[193]:
-
-title = "gif_hidden_to_hidden_connectivity_between_types"
-try:
-    if train_trial_done == 1:
-        epoch_result_arrays = []
-        for epoch in range(40):
-            result_arrays = []
-            for run in range(nruns + 1):
-                unit_type_dict = unit_dict_list_actM[run] 
-                type_unit_dict = unit_dict_list[run]
-                run_weights = np.array(data_train_stacked.loc[(run, epoch, 
-                                                              slice(None), 
-                                                              slice(hidden_to_hidden_weights_Start, hidden_to_hidden_weights_End)), 
-                                                              slice('med1')])[:,0]
-
-            #     run_dwt = np.array(data_train_stacked.loc[(run, epoch_end_initial, 
-            #                                                   'TaskColorWOOsc', 
-            #                                                   slice(hidden_to_hidden_DWt_Start, hidden_to_hidden_DWt_End)), 
-            #                                                   slice('high1')])[:,0]
-
-                connectivity_by_type = defaultdict(list)
-                for unit, unit_type in unit_type_dict.items():
-                    same_type_weights = []
-                    different_type_weights = []
-                    unit_id = get_hidden_id(unit)
-                    for other_unit_type, other_unit_list in type_unit_dict.items(): # other_unit_list = list of units of same type
-                        for other_unit in other_unit_list: # loop through all other units
-
-                            if other_unit == unit: # don't do anything for same unit
-                                continue
-                            other_unit_id = get_hidden_id(other_unit)
-                            weight_id = unit_id * 99 + other_unit_id - int(other_unit_id > unit_id) 
-                            # each unit is only connected to 99 neighbors
-            #                 print(unit, unit_id, unit_type, other_unit, other_unit_id, other_unit_type, weight_id)
-                            weight = run_weights[weight_id]
-                            connectivity_by_type[tuple([unit_type, other_unit_type])].append(weight)
-
-                result_array = get_results_array(connectivity_by_type)
-                result_arrays.append(result_array)            
-            epoch_result_arrays.append(result_arrays)
-
-        #     for unit_type, unit in type_unit_dict.items():
-        #         print(unit_type, unit)
-        print(np.array(epoch_result_arrays).shape)
-        # plot_hidden_to_hidden_connectivity_between_types(result_arrays)
-
-        anim = gif_hidden_to_hidden_connectivity_between_types(epoch_result_arrays)
-        anim.save('test_anim.mp4', fps=1, extra_args=['-vcodec', 'libx264'])
-        
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, True) 
-except:
-    if train_trial_done == 1:
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, False) 
-    
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# ## Hidden-to-Output Connectivity 
-# <a id='Hidden-to-Output_Connectivity'></a>
-
-# In[194]:
-
-def get_result_array(output_connectivity_by_type):
-    """
-    output_connectivity_by_type is a list of 50 elements: each element corresponds
-    to each output unit, sequentially
-    
-    Each element is a dictionary where the key is the type of hidden unit and the value
-    is a list specifying the weights of the hidden unit of the same type feeding into 
-    that output unit
-    
-    We ignore the nans
-    """
-    unit_types = ['low1', 'low2', 'low1+2', 'med1', 'med2', 'med1+2', 'high1', 'high2', 'high1+2', 'not active', 'cross-pair']
-    result_array = np.zeros(shape=(len(unit_types), 50))
-    for output_unit in range(50):
-        connectivity_by_type = output_connectivity_by_type[output_unit]
-        for type_id, unit_type in enumerate(unit_types):
-            result_array[type_id, output_unit] = np.mean(connectivity_by_type[unit_type])
-    return result_array
-    
-
-
-
-def plot_hidden_to_output_connectivity_between_types(result_arrays, direction, analyses_df):
-    plt.clf()
-    if direction == 'ho': #h - hidden, o - output
-        title = "Weight Matrix Hidden-to-Output (Averaged across Runs)"
-    elif direction == 'oh': #h - hidden, o - output
-        title = "Weight Matrix Output-to-Hidden (Averaged across Runs)"
-    try:
-        unit_types = ['low1', 'low2', 'low1+2', 'med1', 'med2', 'med1+2', 'high1', 'high2', 'high1+2', 'not active', 'cross-pair']
-        result_arrays = np.array(result_arrays)
-        result_arrays = np.nanmean(result_arrays, axis = 0)
-        print(result_arrays.shape)
-        fig, ax = plt.subplots(figsize = (15,10))
-        im = ax.imshow(result_arrays, cmap='plasma')
-
-        # We want to show all ticks...
-        ax.set_xticks(np.arange(50))
-        ax.set_yticks(np.arange(len(unit_types)))
-        # ... and label them with the respective list entries
-        xticklabels = []
-        for unit in range(50):
-            if unit < 6:
-                xticklabels.append("unit_" + str(unit) + " (low1)")
-            elif unit == 6:
-                xticklabels.append("unit_" + str(unit) + " (low1+2)")
-            elif unit < 13:
-                xticklabels.append("unit_" + str(unit) + " (low2)")
-            elif unit < 19:
-                xticklabels.append("unit_" + str(unit))
-            elif unit < 23:
-                xticklabels.append("unit_" + str(unit) + " (med1)")
-            elif unit < 26:
-                xticklabels.append("unit_" + str(unit) + " (med1+2)")
-            elif unit < 30:
-                xticklabels.append("unit_" + str(unit) + " (med2)")
-            elif unit < 36:
-                xticklabels.append("unit_" + str(unit))
-            elif unit < 38:
-                xticklabels.append("unit_" + str(unit) + " (high1)")
-            elif unit < 43:
-                xticklabels.append("unit_" + str(unit) + " (high1+2)")
-            elif unit < 45:
-                xticklabels.append("unit_" + str(unit) + " (high2)")
-            else:
-                xticklabels.append("unit_" + str(unit))
-        ax.set_xticklabels(xticklabels)
-        ax.set_yticklabels(unit_types)
-
-        # Rotate the tick labels and set their alignment.
-        plt.setp(ax.get_xticklabels(), rotation=90, ha="right",
-                 rotation_mode="anchor")
-
-        # Loop over data dimensions and create text annotations.
-    #     for i in range(len(unit_types)):
-    #         for j in range(len(unit_types)):
-    #             text = ax.text(j, i, "%.2f" %(result_array[i, j]),
-    #                            ha="center", va="center", color="w")
-    #     import matplotlib.lines as mlines
-    #     l = mlines.Line2D([0,len(unit_types)], [0,len(unit_types)])
-    #     ax.add_line(l)
-        fig.outputbar(im, ax=ax, shrink = 0.3)
-
-
-        ax.set_title(title)
-
-        fig.tight_layout()
-        plt.savefig(checkpoint_fig_dir + title + '.png', bbox_inches = "tight")
-        plt.show()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, True) 
-    except:
-        traceback.print_exc()
-
-        analyses_df = add_analysis_to_analyses_df(analyses_df, title, False) 
-    return analyses_df
-        
-if train_trial_done == 1:
-    if weight_analysis == 1 :
-        result_arrays = []
-        for run in range(nruns + 1):
-            unit_type_dict = unit_dict_list_actM[run] 
-            type_unit_dict = unit_dict_list[run]
-            run_weights = np.array(data_train_stacked.loc[(run, epoch_end_initial, 
-                                                          'TaskColorWOOsc', 
-                                                          slice(hidden_to_output_weights_Start, hidden_to_output_weights_End)), 
-                                                          slice('high1')])[:,0]
-            output_connectivity_by_type = []
-            for output_unit in range(50): # there are 50 output units
-                output_unit_weights = defaultdict(list)
-                for unit, unit_type in unit_type_dict.items():
-                    unit_id = get_hidden_id(unit)
-                    weight_id = unit_id * 50 + output_unit
-                    output_unit_weights[unit_type].append(run_weights[weight_id])
-                output_connectivity_by_type.append(output_unit_weights)
-            result_array = get_result_array(output_connectivity_by_type)
-            result_arrays.append(result_array)
-
-
-
-        #     for unit_type, unit in type_unit_dict.items():
-        #         print(unit_type, unit)
-        analyses_df = plot_hidden_to_output_connectivity_between_types(result_arrays, 'ho', analyses_df)
-
-
-# In[195]:
-
-## Output-to-Hidden Connectivity
-
-if train_trial_done == 1:
-    if weight_analysis == 1: 
-        result_arrays = []
-        for run in range(nruns + 1):
-            unit_type_dict = unit_dict_list_actM[run] 
-            type_unit_dict = unit_dict_list[run]
-            run_weights = np.array(data_train_stacked.loc[(run, max_baseline_epoch, 
-                                                          'TaskColorWOOsc', 
-                                                          slice(output_to_hidden_weights_Start, output_to_hidden_weights_End)), 
-                                                          slice('high1')])[:,0]
-
-            output_connectivity_by_type = []
-            for output_unit in range(50): # there are 50 output units
-                output_unit_weights = defaultdict(list)
-                for unit, unit_type in unit_type_dict.items():
-                    unit_id = get_hidden_id(unit)
-                    weight_id = output_unit * 100 + unit_id
-                    output_unit_weights[unit_type].append(run_weights[weight_id])
-                output_connectivity_by_type.append(output_unit_weights)
-            result_array = get_result_array(output_connectivity_by_type)
-            result_arrays.append(result_array)
-
-
-
-
-        #     for unit_type, unit in type_unit_dict.items():
-        #         print(unit_type, unit)
-        analyses_df = plot_hidden_to_output_connectivity_between_types(result_arrays, 'oh', analyses_df)
-
-
-# In[196]:
-
-codeprofiler.disable()
-
-
 # ## Add necessary checkpoint info
 # <a id='Add_necessary_checkpoint_info'></a>
 
@@ -6950,55 +5652,6 @@ if from_cmdLine != 'cmd' :
 # In[200]:
 
 print('done with analysis!')
-
-
-# In[201]:
-
-from glob import glob
-from IPython.display import display, Image
-# for fs in glob("/scratch/vej/color_diff/alex_jan_26_alex_gradient/results/*"):
-#     print(fs)
-#     try:
-#         display (Image(filename=fs) )
-#     except:
-#         continue
-        
-for fs in glob("/scratch/vej/schlichting/alex_jan_31_mds/results_--blocked_interleave_flag=*/fig/results/*hidden data MDS rotated by run*"):
-# for fs in glob("/scratch/vej/color_diff/alex_jan_27_mdsepsuncommented/results_--HiddNumOverlapUnits=*/fig/results/*"):
-    print(fs)
-    try:
-        display (Image(filename=fs) )
-    except:
-        continue
-
-
-# In[12]:
-
-from glob import glob
-from IPython.display import display, Image
-# for fs in glob("/scratch/vej/color_diff/alex_jan_26_alex_gradient/results/*"):
-#     print(fs)
-#     try:
-#         display (Image(filename=fs) )
-#     except:
-#         continue
-        
-for fs in glob("/scratch/vej/schlichting/alex_feb_5_mds/results_--blocked_interleave_flag=*/fig/results/*hidden data MDS rotated by run*"):
-# for fs in glob("/scratch/vej/color_diff/alex_jan_27_mdsepsuncommented/results_--HiddNumOverlapUnits=*/fig/results/*"):
-    print(fs)
-    try:
-        display (Image(filename=fs) )
-    except:
-        continue
-        
-for fs in glob("/scratch/vej/schlichting/alex_feb_5_mds/results_--blocked_interleave_flag=*/fig/results/*hidden data MDS embedding*"):
-# for fs in glob("/scratch/vej/color_diff/alex_jan_27_mdsepsuncommented/results_--HiddNumOverlapUnits=*/fig/results/*"):
-    print(fs)
-    try:
-        display (Image(filename=fs) )
-    except:
-        continue
-        
 
 
 # In[ ]:

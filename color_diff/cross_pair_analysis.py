@@ -70,6 +70,9 @@ else :
 results_dir = data_dir + '/results/'
 if not os.path.exists(results_dir) :
     os.mkdir(results_dir)
+unusedfigs_dir = data_dir + '/unusedfigs/'
+if not os.path.exists(unusedfigs_dir) :
+    os.mkdir(unusedfigs_dir)   
 
 eps_dir = results_dir + 'eps_files/'
 
@@ -208,7 +211,7 @@ def plot_within_pair_correlation(data, layer, split = False):
     plt.xlabel('Epoch')
     plt.title(title)
         
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
     
@@ -323,7 +326,7 @@ def plot_within_pair_correlation(data, layer):
     plt.legend(title = 'Overlap Condition', bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
     plt.xlabel('Epoch')
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
 
@@ -472,7 +475,7 @@ def plot_error(color_c_mass_df) :
     plt.ylim([-7.5,7.5])
     plt.ylabel(' # Units Away from Correct Value')
     plt.xlabel('Overlap')
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
 plot_error_by_order(color_c_mass_df, ribbon = True)
@@ -543,7 +546,7 @@ def plot_probability_all(probability_face_df):
 
     plt.ylabel('% trials where Target Face Chosen')
     plt.xlabel('Epoch')
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
 plot_probability_all(probability_face_df)
@@ -562,7 +565,7 @@ def Face_Unit_Activity_plot(all_face_df) :
     plt.subplots_adjust(top=0.8)
     g.fig.suptitle(title.title())
     g.add_legend()
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
     
@@ -587,7 +590,7 @@ def Face_Unit_Activity_plot_diff(all_face_df) :
 
     title = 'Face Unit Activity (Target - Competitor)'
     plt.title(title)
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
 Face_Unit_Activity_plot_diff(all_face_df)
@@ -649,7 +652,7 @@ def repulsion_over_time(all_repulsion_df) :
     plt.legend(title = 'Overlap Condition', bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
 
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
 
     plt.show()
 
@@ -671,7 +674,7 @@ def repulsion_final_percent_trials(data) :
     title = 'Repulsion Probability (End)'
     plt.title(title)
 
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
 
     plt.show()
     

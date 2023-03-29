@@ -17,7 +17,7 @@
 # 
 # note - need to change so that when you sweep through with loop.py, it names the subfolders appropriately. This happens currently with chanales, were it's labeled with overlap type. will want to do something like that here so it's labeled as same vs different
 
-# In[ ]:
+# In[1]:
 
 import csv
 import pandas as pd
@@ -53,7 +53,7 @@ color_order_dict = {'first': sns.color_palette('husl')[0],
 
 # ### Set directory
 
-# In[ ]:
+# In[2]:
 
 print('Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
@@ -72,11 +72,14 @@ else :
 #     data_dir = '/Users/victoria/go/src/github.com/emer/leabra/examples/color_diff/data/2021_03_30_test_t4/subject0/'
     data_dir = '/Users/victoria/go/src/github.com/emer/leabra/examples/favila/data/same_diff2/'
     data_dir = '/Users/victoria/go/src/github.com/emer/leabra/examples/favila/data/2022_01_01_favila/'
+    data_dir = './figs/test/'
 
 results_dir = data_dir + '/results/'
 if not os.path.exists(results_dir) :
     os.mkdir(results_dir)
-    
+unusedfigs_dir = data_dir + '/unusedfigs/'
+if not os.path.exists(unusedfigs_dir) :
+    os.mkdir(unusedfigs_dir)   
     
 eps_dir = results_dir + 'eps_files/'
 
@@ -87,7 +90,7 @@ if not os.path.exists(eps_dir):
 # # Load in files
 # <a id='load_files'></a>
 
-# In[ ]:
+# In[3]:
 
 curr_dirs = []
 # overlap = np.arange(6)
@@ -111,7 +114,11 @@ for d in curr_dirs :
 #     all_face_list.append(pd.read_csv(data_dir + d + 'fig/results/face_data.csv', index_col = 0))
 
     all_corr_pre_post_list.append(pd.read_csv(data_dir + d + 'fig/results/pre_post_corr.csv', index_col = 0))
+    # move MDS plots
+    mds_glob = glob.glob(data_dir + d + 'fig/results/*_hidden_data_MDS_rotated_by_run*')
     
+    for source in mds_glob:
+        shutil.copy(source, results_dir + f"Fig 8b: {source.split('/')[-1]}")
 all_c_mass_df = pd.concat(all_c_mass_list, 0)
 all_c_mass_df['overlap'] = all_c_mass_df['overlap'].astype('category')
 all_c_mass_df['layer'] = all_c_mass_df['layer'].astype('category')
@@ -134,7 +141,7 @@ all_corr_pre_post_df = pd.concat(all_corr_pre_post_list, 0)
 
 
 
-# In[ ]:
+# In[4]:
 
 hidden_c_mass_df = all_c_mass_df[all_c_mass_df['layer']=='hidden'].reset_index()
 output_c_mass_df = all_c_mass_df[all_c_mass_df['layer']=='output'].reset_index()
@@ -142,7 +149,7 @@ output_c_mass_df['time']= output_c_mass_df['time'].map({'pre':'Before', 'post':'
 hidden_c_mass_df['time']= hidden_c_mass_df['time'].map({'pre':'Before', 'post':'After'})
 
 
-# In[ ]:
+# In[5]:
 
 palette_before_after = {'Before': (.6,.6,.6), 'After': (0,0,0)}
 order_palette = {'first': (.325, .58, .596), 'second': (.741, .304, .545)}
@@ -166,7 +173,7 @@ order_palette = {'first': (.325, .58, .596), 'second': (.741, .304, .545)}
 
 
 
-# In[ ]:
+# In[7]:
 
 # def plot_within_pair_correlation(data, layer):
 
@@ -194,41 +201,41 @@ order_palette = {'first': (.325, .58, .596), 'second': (.741, .304, .545)}
 
 
 
-def plot_within_pair_correlation(data, layer, split = False):
-    plt.clf()
-    is_within_pair = data['pair_type'] == 'med1-med2'
-    is_layer = data['layer'] == layer
+# def plot_within_pair_correlation(data, layer, split = False):
+#     plt.clf()
+#     is_within_pair = data['pair_type'] == 'med1-med2'
+#     is_layer = data['layer'] == layer
 
-    within_pair_correlation_pre_post = data[(is_within_pair) & (is_layer)]
-    
-    if split == True:
-        sns.lineplot(x = '|Epoch', y = 'correlation', hue='same_diff_condition', data = within_pair_correlation_pre_post,
-                     palette = colors_dict, units = '|Run', estimator = None, alpha = .2)
-    elif split == False:
-        sns.lineplot(x = '|Epoch', y = 'correlation', hue='same_diff_condition', data = within_pair_correlation_pre_post,
-                     palette = colors_dict)
+#     within_pair_correlation_pre_post = data[(is_within_pair) & (is_layer)]
+#     display(within_pair_correlation_pre_post)
+#     if split == True:
+#         sns.lineplot(x = '|Epoch', y = 'correlation', hue='same_diff_condition', data = within_pair_correlation_pre_post,
+#                      palette = colors_dict, units = '|Run', estimator = None, alpha = .2)
+#     elif split == False:
+#         sns.lineplot(x = '|Epoch', y = 'correlation', hue='same_diff_condition', data = within_pair_correlation_pre_post,
+#                      palette = colors_dict)
 
-    plt.axhline(y = 0, c = 'k')
-    plt.ylim([-1.1, 1.1])
-    title = 'Within-Pair Correlation Over Time: ' + layer.capitalize() + ' Layer'
-    if split == True:
-        title = title + ' (runs)'
-    plt.legend(title = 'Condition', bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad=0.)
-    plt.xlabel('Epoch')
-    plt.title(title)
+#     plt.axhline(y = 0, c = 'k')
+#     plt.ylim([-1.1, 1.1])
+#     title = 'Within-Pair Correlation Over Time: ' + layer.capitalize() + ' Layer'
+#     if split == True:
+#         title = title + ' (runs)'
+#     plt.legend(title = 'Condition', bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad=0.)
+#     plt.xlabel('Epoch')
+#     plt.title(title)
         
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
-    plt.show()
+#     plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+#     plt.show()
 
     
-plot_within_pair_correlation(all_corr_df, 'hidden', split = False)
-plot_within_pair_correlation(all_corr_df, 'hidden', split = True)
-plot_within_pair_correlation(all_corr_df, 'output', split = False)
-plot_within_pair_correlation(all_corr_df, 'output', split = True)
+# plot_within_pair_correlation(all_corr_df, 'hidden', split = False)
+# plot_within_pair_correlation(all_corr_df, 'hidden', split = True)
+# plot_within_pair_correlation(all_corr_df, 'output', split = False)
+# plot_within_pair_correlation(all_corr_df, 'output', split = True)
 
 
 
-# In[ ]:
+# In[8]:
 
 def select_data(data):
     
@@ -246,7 +253,7 @@ within_pair_correlation_pre_post = select_data(all_corr_df)
 
 
 
-# In[ ]:
+# In[9]:
 
 epoch_min = within_pair_correlation_pre_post['|Epoch'].min()
 epoch_max = within_pair_correlation_pre_post['|Epoch'].max()
@@ -255,12 +262,12 @@ within_pair_correlation_pre_post['Time'] = within_pair_correlation_pre_post['|Ep
 
 
 
-# In[ ]:
+# In[10]:
 
 within_pair_correlation_pre_post.head()
 
 
-# In[ ]:
+# In[11]:
 
 def pre_post_corr_parameter_shift(data, x_parameter, ribbon = False):
     plt.clf()
@@ -289,7 +296,7 @@ def pre_post_corr_parameter_shift(data, x_parameter, ribbon = False):
 
 #     l.get_texts()[0].set_text('before')
 #     l.get_texts()[1].set_text('after')
-    title = 'Hidden Layer Within-Pair Correlation'
+    title = 'Fig 8a: Hidden Layer Within-Pair Correlation'
     plt.xlabel('Same or Different Face')
     plt.ylim([-1,1.1])
     ax.spines['top'].set_visible(False)
@@ -304,52 +311,6 @@ def pre_post_corr_parameter_shift(data, x_parameter, ribbon = False):
     
     return ax
 ax = pre_post_corr_parameter_shift(within_pair_correlation_pre_post, 'overlap', ribbon = True)
-
-
-# In[ ]:
-
-
-
-
-# 
-# # Item Pre-Post Correlation
-
-# In[ ]:
-
-def pre_post_plot(data, type_plot)  :
-    plt.clf()
-    layer = 'hidden'
-    # sns.barplot(x = 'same_diff_condition', y = 'correlation', hue = 'order', data = all_corr_pre_post_df, palette = 'husl')
-    
-    if type_plot== 'violin':
-        ax = sns.violinplot(x = 'same_diff_condition', y = 'correlation', hue = 'order', 
-                   data = data, palette = color_order_dict, split = True, inner="stick", bw = .4)
-    
-    elif type_plot== 'swarm':
-#         sns.boxplot(x = 'same_diff_condition', y = 'correlation', hue = 'order', data = all_corr_pre_post_df, palette = 'husl')
-        ax = sns.violinplot(x = 'same_diff_condition', y = 'correlation', hue = 'order', 
-                   data = data, palette = color_order_dict)
-        sns.stripplot(x = 'same_diff_condition', y = 'correlation', hue = 'order', 
-                      data = data, color = 'black', dodge=True, alpha = .7)
-
-    handles, labels = ax.get_legend_handles_labels()
-    plt.legend(handles[0:2], labels[0:2], title = 'Order', bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad=0.)
-    plt.axhline(y=0, linestyle = '--', color = 'k')
-    plt.ylim(-2, 2)
-    title = 'Item Pre-Post Correlation: ' + layer.capitalize() + ' Layer'
-    plt.xlabel('Condition')
-    plt.title(title)
-    plt.savefig(results_dir + title + '_' + type_plot+'.png', bbox_inches='tight')
-
-    plt.show()
-    
-pre_post_plot(all_corr_pre_post_df, 'violin')
-pre_post_plot(all_corr_pre_post_df, 'swarm')
-
-
-# In[ ]:
-
-
 
 
 # # Center of Mass analyses
@@ -393,7 +354,7 @@ def center_of_mass_dist(data_df, layer) :
     plt.ylim(-10,10)
     plt.ylabel('Number of Units Apart')
     plt.xlabel('Condition')
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
 center_of_mass_dist(output_c_mass_df, 'Color')
@@ -436,7 +397,7 @@ def plot_error_by_order(output_c_mass_df) :
     plt.ylim([-10,10])
     plt.xlabel('Condition')
     plt.ylabel(' # units away from true value')
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
     
@@ -457,7 +418,7 @@ def plot_error(output_c_mass_df) :
     plt.xlabel('Condition')
     plt.ylim([-10,10])
     plt.ylabel(' # units away from true value')
-    plt.savefig(results_dir + title + '.png', bbox_inches='tight')
+    plt.savefig(unusedfigs_dir + title + '.png', bbox_inches='tight')
     plt.show()
 
 plot_error_by_order(output_c_mass_df)
@@ -469,107 +430,7 @@ plot_error(output_c_mass_df)
 output_c_mass_df
 
 
-# # Analyze Face Associate Task
-# <a id = 'face_task'></a>
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-# def get_probability_face_unit(all_face_df) :
-    
-#     temp = all_face_df.groupby(['|Run', '|Epoch', 'type', 'overlap'])['Act_M'].mean().reset_index()
-#     temp = temp.pivot(index=['|Run', '|Epoch', 'overlap'], columns='type', values='Act_M').reset_index()
-#     temp['Selected_Face'] = temp[['competitor', 'other', 'target']].idxmax(axis = 1)
-    
-#     indiv_amounts = temp.groupby(['|Epoch', 'overlap'])['Selected_Face'].value_counts()
-#     total_amounts = temp.groupby(['|Epoch', 'overlap']).size()
-#     probability_face_df = indiv_amounts.div(total_amounts).reset_index()
-#     probability_face_df= probability_face_df.rename(columns={0: 'probability'})
-#     return probability_face_df
-    
-# probability_face_df = get_probability_face_unit(all_face_df)
-
-
-# In[ ]:
-
-# def plot_probability_all(probability_face_df):
-#     sns.lineplot(x = '|Epoch', y = 'probability', hue='overlap', data = probability_face_df[probability_face_df['Selected_Face'] == 'target'], palette = 'GnBu')
-#     title = 'Probability of Choosing Correct Face Unit'
-#     plt.title(title)
-#     plt.ylabel('% trials where Target Face Chosen')
-#     plt.xlabel('Epoch')
-#     plt.savefig(results_dir + title + '.png')
-#     plt.show()
-
-# plot_probability_all(probability_face_df)
-
-
-# In[ ]:
-
-# def Face_Unit_Activity_plot(all_face_df) :
-#     temp = all_face_df.groupby(['|Run', '|Epoch', 'type', 'overlap'])['Act_M'].mean().reset_index()
-
-#     g = sns.FacetGrid(temp, col = 'overlap', col_wrap=3, hue = 'type', palette = 'Dark2', ylim=(-.1, 1))
-#     g.map(sns.lineplot, '|Epoch', 'Act_M')
-#     g.set_axis_labels("Epoch", "Face Unit Activity")
-#     title = 'Face Unit Activity'
-#     plt.subplots_adjust(top=0.8)
-#     g.fig.suptitle(title.title())
-#     g.add_legend()
-#     plt.show()
-#     plt.savefig(results_dir + title + '.png')
-
-    
-# Face_Unit_Activity_plot(all_face_df)
-
-
-# In[ ]:
-
-# temp = all_face_df.groupby(['|Run', '|Epoch', 'type', 'overlap'])['Act_M'].mean().reset_index()
-# temp = temp.pivot(index=['|Run', '|Epoch', 'overlap'], columns='type', values='Act_M').reset_index()
-# temp['targ-comp'] = temp['target'] - temp['competitor']
-
-# ax = sns.lineplot(x = '|Epoch', y = 'targ-comp', hue = 'overlap', data = temp, palette = 'GnBu')
-
-# plt.ylabel('Target Unit Activity - Competitor Unit Activity')
-# plt.xlabel('Epoch')
-# plt.ylim(-.1, 1)
-# title = 'Face Unit Activity (Target - Competitor)'
-# plt.title(title)
-# plt.savefig(results_dir + title + '.png')
-# plt.show()
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-# temp[temp['overlap'] == '0/6']['targ-comp']
-
-
-# In[ ]:
-
-# import scipy.stats as stats
-# # stats f_oneway functions takes the groups as input and returns ANOVA F and p value
-# fvalue, pvalue = stats.f_oneway(temp[temp['overlap'] == '0/6']['targ-comp'], temp[temp['overlap'] == '1/6']['targ-comp'], temp[temp['overlap'] == '2/6']['targ-comp'], temp[temp['overlap'] == '3/6']['targ-comp'], temp[temp['overlap'] == '4/6']['targ-comp'], temp[temp['overlap'] == '5/6']['targ-comp'])
-# print(fvalue)
-# print(pvalue)
-                                     
-
-
 # In[ ]:
 
 print('done with cross-pair analysis!')
-
-
-# In[ ]:
-
-
 

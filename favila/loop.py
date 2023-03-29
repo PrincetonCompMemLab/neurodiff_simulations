@@ -9,86 +9,6 @@ import glob as glob
 
 
 
-
-def get_email_address(jobfile):
-    process = subprocess.Popen(['whoami'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    user, err = process.communicate()
-
-    with open(jobfile, "r") as f:
-        lines = f.readlines()
-    with open(jobfile, "w") as f:
-        if user == b'qanguyen\n':
-            lines[6] = "#SBATCH --mail-user=alexn@uni.minerva.edu\n"
-        else:
-            lines[6] = "#SBATCH --mail-user=vej@princeton.edu\n"
-        f.writelines(lines)
-
-def get_current_cluster():
-    return subprocess.check_output('echo $CLUSTER_NAME', shell=True)
-
-def get_current_user():
-    process = subprocess.Popen(['whoami'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    user, err = process.communicate()
-
-    if user == b'qanguyen\n':
-        user = 'qanguyen'
-    else:
-        user = 'vej'
-    return user 
-
-def check_if_any_running_sbatch_jobs():
-    user = get_current_user()
-
-    if 'qanguyen' in user:
-        user = 'qanguyen'
-    else:
-        user = 'vej'
-        
-    process = subprocess.Popen(['squeue', '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    running_jobs, err = process.communicate()
-    running_jobs = running_jobs.decode("utf-8").split("\n")
-
-    for job in running_jobs:
-        # If the job name has color_di in it, then there are still jobs returning
-        if 'favila' in job:
-            return True
-
-    # Else, there are no more color_diff jobs left
-    return False
-
-
-def check_if_job_running(jobid):
-
-    process = subprocess.Popen(['squeue', '-j', str(jobid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    running_jobs, err = process.communicate()
-    running_jobs = running_jobs.decode("utf-8").split("\n")
-    if running_jobs == [""]:
-        # Else, there are no more color_diff jobs left
-        return False
-    else:
-        return True
-
-
-def concat_cross_batch_csv(output_dir):
-    for file_type in ['checkpoints', 'results', 'analyses']:
-        data_folders = glob.glob(output_dir + "/*")
-        if file_type == 'analyses':
-            csv_path = [folder + '/fig/' + file_type + '.csv' for folder in data_folders if os.path.isdir(folder)]
-        else:
-            csv_path = [folder + '/fig/' + file_type + '/' + file_type + '.csv' for folder in data_folders if os.path.isdir(folder)]
-
-        all_df = []
-        for d_file in csv_path:
-            csv_read = pd.read_csv(d_file)
-            all_df.append(csv_read)
-
-        data_dir = f'{output_dir}/all_' + file_type + '.csv'
-        all_df = pd.concat(all_df)
-        all_df.to_csv(data_dir)
-        del(all_df)
-
-
-
 def string(boolean):
     if boolean == True:
         return "true"
@@ -97,7 +17,7 @@ def string(boolean):
 
 def loop(output_dir, params, param_names,
          values = [], depth = 0, **kwargs):
-
+    jobfile = 'parametersearch.sh'
     if kwargs.get('test', False) == True:
         num_exps = 2
     else:
@@ -107,6 +27,8 @@ def loop(output_dir, params, param_names,
         analyze_only = '#'
     else:
         analyze_only = ''
+        
+    
         
     if depth == len(params):
         cmd_string = ""
@@ -130,19 +52,17 @@ def loop(output_dir, params, param_names,
         for idx, param_name in enumerate(param_names):
             saveDirName += f"{param_name}={str(values[idx])}"
 
-        print(f"./favila --mode=batch --saveDirName={saveDirName} \
-                     {cmd_string}")
         # Edit sbatch file
         with open(jobfile, "r+") as f:
             lines = f.readlines()
 
         print(lines)
         with open(jobfile, "w") as f:
-            lines[-3] = f"{analyze_only}./favila --mode=batch --saveDirName={saveDirName} --runs={num_exps} --trncyclog=false --tstcyclog=false \
+            lines[-4] = f"{analyze_only}./main --mode=batch --saveDirName={saveDirName} --runs={num_exps} --trncyclog=false --tstcyclog=false \
                         {cmd_string} \n"
-            lines[-2] = f"python -u Post_analyses.py {saveDirName} cmd\n"
-            lines[-1] = f"python -u read_task_parameters_into_csv.py {saveDirName} cmd"
-
+            lines[-3] = f"python -u Post_analyses.py {saveDirName} cmd\n"
+            lines[-2] = f"python -u read_task_parameters_into_csv.py {saveDirName} cmd\n"
+            lines[-1] = f"python cross_pair_analysis.py {output_dir} cmd"
             # add mode batch
             f.writelines(lines)
             [print(l) for l in lines]
@@ -177,34 +97,24 @@ if __name__ == "__main__":
                         help='name of variable to search over')
     parser.add_argument('--boundary_plot',
                         action='store_true', help='whether to do cross_pair or boundary condition plot')
+    parser.add_argument('--data_dir', default='./figs',
+                        action='store', help='directory to save figures')
     
     args = parser.parse_args()
     print("Arguments", args, flush=True)
     parameter_search_job_name = args.parameter_search_job_name
-    cluster = get_current_cluster()
-    user = get_current_user()
-    if b'della' in cluster:
-        data_dir = f"/scratch/{user}/favila"
-    elif b'spock' in cluster:
-        data_dir = f"/scratch/{user}/favila"
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
+    if not os.path.exists(args.data_dir):
+        os.mkdir(args.data_dir)
 
 
-    output_dir = f"{data_dir}/{parameter_search_job_name}"
+    output_dir = f"{args.data_dir}/{parameter_search_job_name}" 
     if not args.analyze_only:
         assert not os.path.exists(f"{output_dir}"), f"The directory {output_dir} already exists \
                                                                     Please use a different job name for the parameter search."
 
         os.mkdir(output_dir)
         
-    #if you want to change the type of emails you get, change it here:
-    jobfile = "parametersearch.sh"
-    with open(jobfile, "r") as f:
-        lines = f.readlines()
-        lines[5] = "#SBATCH --mail-type=ALL\n"
-
-    get_email_address(jobfile)
+     
 
     if args.searchvar == 'same_diff_flag':
         param_names = ["--same_diff_flag"]
@@ -220,13 +130,11 @@ if __name__ == "__main__":
     loop(output_dir, params = params, param_names = param_names,
                 test=args.test, analyze_only = args.analyze_only)
 
-    while check_if_any_running_sbatch_jobs() == True:
-        time.sleep(30)
-    # Once there are no more jobs, run concat_cross_batch_csv()
-    if args.boundary_plot:
-        s = subprocess.run([f'jupyter nbconvert boundary_condition_plots.ipynb --to python'], shell=True)
-        s = subprocess.run([f'python boundary_condition_plots.py {output_dir} cmd'], shell=True)
-    else:
-        s = subprocess.run([f'jupyter nbconvert cross_pair_analysis.ipynb --to python'], shell=True)
-        s = subprocess.run([f'python cross_pair_analysis.py {output_dir} cmd'], shell=True)
-    # concat_cross_batch_csv(output_dir)
+    #while check_if_any_running_sbatch_jobs() == True:
+    #    time.sleep(30)
+    #if args.boundary_plot:
+    #    s = subprocess.run([f'jupyter nbconvert boundary_condition_plots.ipynb --to python'], shell=True)
+    #    s = subprocess.run([f'python boundary_condition_plots.py {output_dir} cmd'], shell=True)
+    #else:
+    #    s = subprocess.run([f'jupyter nbconvert cross_pair_analysis.ipynb --to python'], shell=True)
+    #    s = subprocess.run([f'python cross_pair_analysis.py {output_dir} cmd'], shell=True)

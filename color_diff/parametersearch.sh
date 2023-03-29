@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=5G
 #SBATCH --time=00:50:00
-source activate leabra
+conda activate leabra
 jupyter nbconvert cross_pair_analysis.ipynb --to python
 ./main --mode=batch --saveDirName=./figs/test/results_--HiddNumOverlapUnits=5 --runs=2 --trncyclog=false --tstcyclog=false                         --HiddNumOverlapUnits=5  
 python Post_analyses.py 2 ./figs/test/results_--HiddNumOverlapUnits=5 cmd

@@ -3,8 +3,6 @@ module main
 go 1.18
 
 require (
-	github.com/PrincetonCompMemLab/private-emergent v0.5.4-0.20230313041853-b7c632ccb54c
-	github.com/PrincetonCompMemLab/private-leabra v0.5.6-0.20230313053131-0f9637ecf43f
 	github.com/emer/etable v1.0.42
 	github.com/goki/gi v1.2.18-0.20220729010345-9de4071f7e0d
 	github.com/goki/ki v1.1.8
@@ -17,6 +15,8 @@ require (
 	github.com/BurntSushi/xgb v0.0.0-20210121224620-deaf085860bc // indirect
 	github.com/BurntSushi/xgbutil v0.0.0-20190907113008-ad855c713046 // indirect
 	github.com/Masterminds/vcs v1.13.1 // indirect
+	github.com/PrincetonCompMemLab/neurodiff_emergent v0.0.0-20230329201147-531e5d3923e7 // indirect
+	github.com/PrincetonCompMemLab/neurodiff_leabra v0.0.0-20230329213024-e16bae7d3245 // indirect
 	github.com/ajstarks/svgo v0.0.0-20210927141636-6d70534b1098 // indirect
 	github.com/akutz/sortfold v0.2.1 // indirect
 	github.com/alecthomas/chroma v0.9.4 // indirect

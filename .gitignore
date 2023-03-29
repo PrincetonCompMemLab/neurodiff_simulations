@@ -7,7 +7,7 @@
 *.wts
 *.pdf
 *.mp4
-./color_diff/main
+./chanales/main
 ./favila/main
 ./schlichting/main
 all_checkpoints.csv 

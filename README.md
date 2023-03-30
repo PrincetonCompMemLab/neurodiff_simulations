@@ -31,8 +31,6 @@ You need to set the `GOPATH` and `GOROOT`.
 - `GOROOT` is where the go executable is
 - `GOPATH` is where to install go packages.
 
-You'll use `GOPATH` for the actual project folders for your model. Each project will have a directory, so it'll be something like `GOPATH/src/github.com/emer/leabra/examples/PROJECTNAME.`
-
 Note that `go` forces the separation of `GOPATH` and `GOROOT`, so they can't be the same directory. This README will assume you are using a folder named `go/` for `GOROOT` and `gocode/` for for `GOPATH`.
 
 1. Add the following lines to `~/.bashrc`

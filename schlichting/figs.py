@@ -57,7 +57,10 @@ def loop(output_dir, params, param_names,
                         {cmd_string} \n"
             lines[-3] = f"python Post_analyses.py {saveDirName} cmd\n"
             lines[-2] = f"python read_task_parameters_into_csv.py {saveDirName} cmd\n"
-            lines[-1] = f"python cross_pair_analysis.py {output_dir} cmd"
+            if kwargs.get("searchvar", "HiddNumOverlapUnits") == "HiddNumOverlapUnits":
+                lines[-1] = f"python cross_pair_analysis.py {output_dir} cmd"
+            else:
+                lines[-1] = f"python boundary_condition_plots.py {output_dir} cmd"
             # add mode batch
             f.writelines(lines)
             [print(l) for l in lines]
@@ -79,6 +82,7 @@ if __name__ == "__main__":
     s = subprocess.run([f'go build'], shell=True)
     s = subprocess.run([f'jupyter nbconvert Post_analyses.ipynb --to python'], shell=True)
     s = subprocess.run([f'jupyter nbconvert read_task_parameters_into_csv.ipynb --to python'], shell=True)
+    s = subprocess.run([f'jupyter nbconvert boundary_condition_plots.ipynb --to python'], shell=True)
     parser = argparse.ArgumentParser(
             description='Parameter search, Emergent model')
     parser.add_argument('parameter_search_job_name', type=str,
@@ -90,8 +94,6 @@ if __name__ == "__main__":
     parser.add_argument('--searchvar', type=str,
                         action='store', default='blocked_interleave_flag',
                         help='name of variable to search over')
-    parser.add_argument('--boundary_plot',
-                        action='store_true', help='whether to do cross_pair or boundary condition plot')
     parser.add_argument('--data_dir', default='./figs',
                         action='store', help='directory to save figures')
     
@@ -121,7 +123,7 @@ if __name__ == "__main__":
         LRateOverAll = [0, .01, .05, .1, .02, .5, 1, 2]
         params = [LRateOverAll]
     loop(output_dir, params = params, param_names = param_names,
-                test=args.test, analyze_only = args.analyze_only) 
+                test=args.test, analyze_only = args.analyze_only, searchvar=args.searchvar)
 
     
 

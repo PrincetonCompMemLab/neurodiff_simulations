@@ -5,17 +5,17 @@ Model and analysis code corresponding to Ritvo, Nguyen, Turk-Browne & Norman (20
 
 These models have been developed based on the [Emergent](https://github.com/emer/emergent) framework, developed primarily by the CCN lab at UCDavis.
 
-- List of steps
-    - [Setting up your `GOPATH` and `GOROOT`](#File-structure)
-    - [Install go](#Installing-Go)
-    - [Install **neurodiff_simulations**](#Install-neurodiff_simulations)
+- Steps to Installing and Running the Simulations
+    1. [Setting up your `GOPATH` and `GOROOT`](#File-structure)
+    2. [Install go](#Installing-Go)
+    3. [Install **neurodiff_simulations**](#Install-neurodiff_simulations)
         - Cloning the repository: Run `git clone https://github.com/PrincetonCompMemLab/neurodiff_simulations.git`
         - Build the simulation (do this for `chanales` / `favila` / `schlichting` simulations)
             - e.g. `cd` into `emergent-differentiation/color_diff`
             - run `go build`
         - Run the simulations:
             - run `./main`
-    - [Reproducing the plots](#Reproducing-the-plots)
+    4. [Reproducing the plots](#Reproducing-the-plots)
 
 ## Assumptions
 

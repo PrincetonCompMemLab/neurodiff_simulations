@@ -2,7 +2,7 @@
 ![simulationexample](https://i.imgur.com/Yjof8ac.png)
 - List of steps
     - Setting up your `GOPATH` and `GOROOT`
-    - Install go
+    - [Install go](#Installing-Go)
     - Install **emergent-differentiation**
         - Cloning the repository: Run `git clone [https://github.com/PrincetonCompMemLab/emergent-differentiation.git](https://github.com/PrincetonCompMemLab/emergent-differentiation.git)`
         - Build the simulation (do this for `color_diff` / `favila` / `schlichting` simulations)
@@ -13,8 +13,9 @@
 
 ## Assumptions
 
-- OS: Linux / Mac
-- Go 1.18
+- OS: We can guarantee performance on Unix-based platforms such as MacOS and Linux.
+  Performance on Windows operating systems is not guaranteed.
+- Any version starting 1.13 should work. We used Go 1.18
 
 ### File structure:
 
@@ -44,6 +45,7 @@ Note that `go` forces the separation of `GOPATH` and `GOROOT`, so they can't be 
 
     ```
 
+# Installing Go
 
 ## Download Go
 
@@ -53,14 +55,14 @@ You should download versions 1.13 or later.
 
 ### Downloading Go on the command line
 
-To download go on the cluster, use `wget`  and then the download link, such as
+To download go using the command line, use `wget` and then the download link. Make sure to download the tar.gz file. For example, if you are downloading Go 1.14 for Linux OS, you can run
 
 ```
 wget https://dl.google.com/go/go1.14.1.linux-amd64.tar.gz
 
 ```
 
-In general, to download a file, just run `wget` . The above command downloads a .tar.gz file wherever you are. You probably want to run it from /PATH/TO/CODE, or else move the tar.gz file there after you download it.
+The above command downloads a .tar.gz file wherever you ran the command from. You probably want to run it from /PATH/TO/CODE, or else move the tar.gz file there after you download it.
 
 ## Install Go
 

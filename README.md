@@ -130,7 +130,7 @@ You might want to make sure you installed Go successfully. To do this:
         - Note: make sure to point to correct public repo
         - Note: make sure that the master / main branches are the right branch
 - Build the simulation (do this for `chanales` / `favila` / `schlichting` simulations)
-    - `cd` into `https://github.com/PrincetonCompMemLab/neurodiff_simulations.git/color_diff`
+    - `cd` into `neurodiff_simulations`
     - run `go build`
 - Run the simulations:
     - run `./main`

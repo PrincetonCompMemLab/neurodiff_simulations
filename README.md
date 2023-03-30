@@ -1,21 +1,28 @@
 # Installing emergent
 ![simulationexample](https://i.imgur.com/Yjof8ac.png)
+
+Model and analysis code corresponding to Ritvo, Nguyen, Turk-Browne & Norman (2023).
+
+These models have been developed based on the [Emergent](https://github.com/emer/emergent) framework, developed primarily by the CCN lab at UCDavis.
+
 - List of steps
-    - Setting up your `GOPATH` and `GOROOT`
+    - [Setting up your `GOPATH` and `GOROOT`](#File-structure)
     - [Install go](#Installing-Go)
-    - Install **emergent-differentiation**
-        - Cloning the repository: Run `git clone [https://github.com/PrincetonCompMemLab/emergent-differentiation.git](https://github.com/PrincetonCompMemLab/emergent-differentiation.git)`
-        - Build the simulation (do this for `color_diff` / `favila` / `schlichting` simulations)
+    - [Install **neurodiff_simulations**](#Install-neurodiff_simulations)
+        - Cloning the repository: Run `git clone https://github.com/PrincetonCompMemLab/neurodiff_simulations.git`
+        - Build the simulation (do this for `chanales` / `favila` / `schlichting` simulations)
             - e.g. `cd` into `emergent-differentiation/color_diff`
             - run `go build`
         - Run the simulations:
             - run `./main`
+    - Reproducing the plots
 
 ## Assumptions
 
 - OS: We can guarantee performance on Unix-based platforms such as MacOS and Linux.
   Performance on Windows operating systems is not guaranteed.
 - Any version starting 1.13 should work. We used Go 1.18
+- To run our analyses, we use the [Slurm](https://slurm.schedmd.com/documentation.html) scheduling system.
 
 ### File structure:
 
@@ -116,7 +123,7 @@ You might want to make sure you installed Go successfully. To do this:
 
 - If the command returns `hello, world`, you're golden. If not, try running `echo $PATH` to see if `GOROOT` and `GOPATH` were added correctly.
 
-## Install [**our project**]
+## Install neurodiff_simulations
 
 - Clone the github repo:
     - Run `git clone [https://github.com/PrincetonCompMemLab/emergent-differentiation.git](https://github.com/PrincetonCompMemLab/emergent-differentiation.git)`
@@ -130,7 +137,20 @@ You might want to make sure you installed Go successfully. To do this:
 
 # Reproducing the plots
 
-- Figure 4:
-    - python [loop.py](http://loop.py) output_folder_name
-- Figure 6:
-    -
+- Figures 4, 8, 10: The `figs.py` script in each simulation directory will generate figures corresponding to the simulations of the Chanales et al., Favila et al., and Schlichting et al. studies
+    - In each directory, run `python figs.py output_folder_name --data_dir=/PATH/TO/OUTPUT_FOLDER/`
+        - Replace `/PATH/TO/OUTPUT_FOLDER/` and `output_folder_name` with the path to store the output folder and the name of the output folder, respectively
+        - This applies for all `figs.py` files
+        - `figs.py` will create figures in this directory: `/PATH/TO/OUTPUT_FOLDER/output_folder_name/results`
+        - If `data_dir` is not specified, the script will save the figures in a subdirectory of the current directory called `./figs`
+- Figure 6B:
+    - In each simulation directory, run `python figs.py output_folder_name --data_dir=/PATH/TO/OUTPUT_FOLDER/ --searchvar=LRateOverAll`
+        - `figs.py` will create figures in this directory: `/PATH/TO/OUTPUT_FOLDER/output_folder_name/results`
+- Figure 6A:
+    - `figs.py` will create a plot of the learning rate vs. within-pair correlation before and after learning for each condition (e.g. 0/6, 1/6, 2/6, 3/6, 4/6, and 5/6 are the learning conditions of the Chanales et al. study)
+    - You can make `figs.py` make this plot for each learning condition by doing the following:
+        - For the Chanales et al. simulation, add the flag `--HiddNumOverlapUnits=i` where i is in [0,1,2,3,4,5] to the line `lines[-4] = f"{analyze_only}./main --mode=batch --saveDirName={saveDirName} --runs={num_exps} --trncyclog=false --tstcyclog=false {cmd_string} \n"` in `figs.py`
+        - For the Favila et al. simulation, add the flag `--same_diff_flag=i` where i is in ['Same', 'Different'] to the line `lines[-4] = f"{analyze_only}./main --mode=batch --saveDirName={saveDirName} --runs={num_exps} --trncyclog=false --tstcyclog=false {cmd_string} \n"` in `figs.py`
+            - the flag is case sensitive !
+        -  For the Schlichting et al. simulation, add the flag `--blocked_interleave_flag=i` where i is in ['Blocked', 'Interleave'] to the line `lines[-4] = f"{analyze_only}./main --mode=batch --saveDirName={saveDirName} --runs={num_exps} --trncyclog=false --tstcyclog=false {cmd_string} \n"` in `figs.py`
+    - run `python figs.py output_folder_name --data_dir=/PATH/TO/OUTPUT_FOLDER/ --searchvar=LRateOverAll`

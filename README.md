@@ -15,7 +15,7 @@ These models have been developed based on the [Emergent](https://github.com/emer
             - run `go build`
         - Run the simulations:
             - run `./main`
-    - Reproducing the plots
+    - [Reproducing the plots](#Reproducing-the-plots)
 
 ## Assumptions
 

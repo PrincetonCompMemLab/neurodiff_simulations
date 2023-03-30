@@ -126,11 +126,11 @@ You might want to make sure you installed Go successfully. To do this:
 ## Install neurodiff_simulations
 
 - Clone the github repo:
-    - Run `git clone [https://github.com/PrincetonCompMemLab/emergent-differentiation.git](https://github.com/PrincetonCompMemLab/emergent-differentiation.git)`
+    - Run `git clone https://github.com/PrincetonCompMemLab/neurodiff_simulations.git`
         - Note: make sure to point to correct public repo
         - Note: make sure that the master / main branches are the right branch
-- Build the simulation (do this for `color_diff` / `favila` / `schlichting` simulations)
-    - `cd` into `emergent-differentiation/color_diff`
+- Build the simulation (do this for `chanales` / `favila` / `schlichting` simulations)
+    - `cd` into `https://github.com/PrincetonCompMemLab/neurodiff_simulations.git/color_diff`
     - run `go build`
 - Run the simulations:
     - run `./main`

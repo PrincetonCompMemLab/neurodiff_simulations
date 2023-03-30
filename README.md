@@ -1,4 +1,4 @@
-# Installing emergent
+# README
 ![simulationexample](https://i.imgur.com/Yjof8ac.png)
 
 Model and analysis code corresponding to Ritvo, Nguyen, Turk-Browne & Norman (2023).

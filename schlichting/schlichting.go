@@ -2936,6 +2936,16 @@ func (ss *Sim) ConfigSaveWts(mode, saveDirName string) {
 	fmt.Println("saveDirName", saveDirName)
 	if mode == "experiment" {
 		dirName = "./data/" + time.Now().Format("2006-01-02-15-04-05")
+		// Check if "data" directory exists
+		if _, err := os.Stat("data"); os.IsNotExist(err) {
+			// Create "data" directory if it doesn't exist
+			err := os.Mkdir("data", 0755)
+			if err != nil {
+				fmt.Println("Error creating directory:", err)
+				return
+			}
+			fmt.Println("Directory 'data' created successfully!")
+		}
 	} else if mode == "batch" {
 		dirName = saveDirName
 	}

@@ -3,7 +3,7 @@
 
 Model and analysis code corresponding to Ritvo, Nguyen, Turk-Browne & Norman (2023).
 
-These models have been developed based on the [Emergent](https://github.com/emer/emergent) framework, developed primarily by the CCN lab at UCDavis.
+These models have been developed based on the [Emergent](https://github.com/emer/emergent) framework, developed primarily by the CCN lab at UCDavis. In our simulations, we use our own variant of Emergent, which can be accessed in the [neurodiff_leabra](#https://github.com/PrincetonCompMemLab/neurodiff_leabra) and [neurodiff_emergent](#https://github.com/PrincetonCompMemLab/neurodiff_emergent) repositories.
 
 - Steps to Installing and Running the Simulations
     1. [Setting up your `GOPATH` and `GOROOT`](#File-structure)
@@ -11,7 +11,7 @@ These models have been developed based on the [Emergent](https://github.com/emer
     3. [Install **neurodiff_simulations**](#Install-neurodiff_simulations)
         - Cloning the repository: Run `git clone https://github.com/PrincetonCompMemLab/neurodiff_simulations.git`
         - Build the simulation (do this for `chanales` / `favila` / `schlichting` simulations)
-            - e.g. `cd` into `emergent-differentiation/color_diff`
+            - e.g. `cd` into `emergent-differentiation/chanales`
             - run `go build`
         - Run the simulations:
             - run `./main`
@@ -39,7 +39,6 @@ Note that `go` forces the separation of `GOPATH` and `GOROOT`, so they can't be 
     export GOROOT="PATH/TO/CODE/go"
     export GOPATH="PATH/TO/CODE/gocode"
     export PATH=$GOROOT/bin:$PATH
-
     ```
 
     - replace `"PATH/TO/CODE/"` with the paths to the actual paths of your go installs
@@ -47,7 +46,6 @@ Note that `go` forces the separation of `GOPATH` and `GOROOT`, so they can't be 
 
     ```
     source ~/.bashrc
-
     ```
 
 # Installing Go
@@ -125,14 +123,14 @@ You might want to make sure you installed Go successfully. To do this:
 
 - Clone the github repo:
     - Run `git clone https://github.com/PrincetonCompMemLab/neurodiff_simulations.git`
-        - Note: make sure to point to correct public repo
-        - Note: make sure that the master / main branches are the right branch
 - Build the simulation (do this for `chanales` / `favila` / `schlichting` simulations)
     - `cd` into `neurodiff_simulations`
     - run `go build`
 - Run the simulations:
     - run `./main`
 
+# Running the simulations
+-
 # Reproducing the plots
 
 - Figures 4, 8, 10: The `figs.py` script in each simulation directory will generate figures corresponding to the simulations of the Chanales et al., Favila et al., and Schlichting et al. studies

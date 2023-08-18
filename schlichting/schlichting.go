@@ -112,8 +112,8 @@ var ParamSets = params.Sets{
 					"Prjn.Learn.Lrate": ".2",
 					"Prjn.WtScale.Abs": "1.2", //was 1.4
 					"Prjn.WtInit.InitStrategy" : "HiddenToOutput",
-					"Prjn.WtInit.BlockedInterleaveCondition" : "Interleave", // Blocked or Interleave
-					"Prjn.WtInit.StrongConnection" : "0.999",
+					"Prjn.WtInit.BlockedInterleaveCondition" : "Blocked", // Blocked or Interleave
+					"Prjn.WtInit.StrongConnection" : "0.9",
 					"Prjn.WtInit.WeakConnection" : "0.7",
 					"Prjn.WtInit.Var" : ".01",
 					"Prjn.WtInit.Mean" : ".02",

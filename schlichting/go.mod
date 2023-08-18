@@ -10,13 +10,16 @@ require (
 )
 
 require (
+	github.com/PrincetonCompMemLab/neurodiff_emergent v0.0.0-20230329201147-531e5d3923e7
+	github.com/PrincetonCompMemLab/neurodiff_leabra v0.0.0-20230329213024-e16bae7d3245
+)
+
+require (
 	github.com/BurntSushi/freetype-go v0.0.0-20160129220410-b763ddbfe298 // indirect
 	github.com/BurntSushi/graphics-go v0.0.0-20160129215708-b43f31a4a966 // indirect
 	github.com/BurntSushi/xgb v0.0.0-20210121224620-deaf085860bc // indirect
 	github.com/BurntSushi/xgbutil v0.0.0-20190907113008-ad855c713046 // indirect
 	github.com/Masterminds/vcs v1.13.1 // indirect
-	github.com/PrincetonCompMemLab/neurodiff_emergent v0.0.0-20230329201147-531e5d3923e7 // indirect
-	github.com/PrincetonCompMemLab/neurodiff_leabra v0.0.0-20230329213024-e16bae7d3245 // indirect
 	github.com/ajstarks/svgo v0.0.0-20210927141636-6d70534b1098 // indirect
 	github.com/akutz/sortfold v0.2.1 // indirect
 	github.com/alecthomas/chroma v0.9.4 // indirect
